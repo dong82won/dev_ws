@@ -1,0 +1,3 @@
+[console_scripts]
+custom_teleop_node = custom_teleop_pkg.custom_joy_teleop:main
+

@@ -1,0 +1,8 @@
+source;share/universalbot_description/hook/cmake_prefix_path.ps1
+source;share/universalbot_description/hook/cmake_prefix_path.dsv
+source;share/universalbot_description/hook/cmake_prefix_path.sh
+source;share/universalbot_description/local_setup.bash
+source;share/universalbot_description/local_setup.dsv
+source;share/universalbot_description/local_setup.ps1
+source;share/universalbot_description/local_setup.sh
+source;share/universalbot_description/local_setup.zsh
