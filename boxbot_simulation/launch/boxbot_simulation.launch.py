@@ -46,16 +46,12 @@ def generate_launch_description():
 
     # 3. 월드 실행
     world_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_simulation, 'launch', 'start2_world.launch.py')
-        )
+        PythonLaunchDescriptionSource(os.path.join(pkg_simulation, 'launch', 'start2_world.launch.py'))
     )
 
     # 4. 로봇 스폰 실행
     spawn_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_simulation, 'launch', 'spawn_robot.launch.py')
-        ),
+        PythonLaunchDescriptionSource(os.path.join(pkg_simulation, 'launch', 'spawn_robot.launch.py')),
         launch_arguments={
             'x_pose': x_pose,
             'y_pose': y_pose,
