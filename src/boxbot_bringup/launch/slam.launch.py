@@ -15,7 +15,7 @@ def generate_launch_description():
         name='slam_toolbox',
         output='screen',
         parameters=[
-            slam_config_path, 
+            slam_config_path,
             {'use_sim_time': True} # 가제보 시뮬레이션을 위해 필수
         ]
     )

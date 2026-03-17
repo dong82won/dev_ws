@@ -10,9 +10,6 @@ def generate_launch_description():
     # 패키지 경로
     pkg_description = get_package_share_directory('boxbot_description')
 
-    # URDF 파일 경로
-    urdf_file = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf')
-    xacro_file = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf.xacro')
 
     # 파라미터 참조 (상위 런치 파일에서 정의됨)
     x_pose_arg = DeclareLaunchArgument('x_pose', default_value='0.0', description='Spawn X position')
@@ -24,9 +21,16 @@ def generate_launch_description():
     y_pose = LaunchConfiguration('y_pose')
     z_pose = LaunchConfiguration('z_pose')
 
-    # URDF 내용을 읽어오기 위한 Command 객체
-    robot_desc = ParameterValue(Command(['xacro ', urdf_file]),value_type=str)
-    #robot_desc = ParameterValue(Command(['xacro ', xacro_file]),value_type=str)
+
+    # # URDF 파일 경로
+    # urdf_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf')
+    # with open(urdf_file_path, 'r') as infp:
+    #     robot_desc = infp.read()
+
+    # XACRO 명령 실행 (xacro_file을 사용하여 URDF 데이터 생성)
+    # ParameterValue를 사용하여 문자열로 명확히 변환해줍니다.
+    xacro_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf.xacro')
+    robot_desc = ParameterValue(Command(['xacro ', xacro_file_path]), value_type=str)
 
     # robot_state_publisher 노드
     robot_state_publisher_node = Node(
@@ -50,7 +54,7 @@ def generate_launch_description():
             '-x', x_pose,
             '-y', y_pose,
             '-z', z_pose,
-            '-timeout', '120.0'  # [추가] 대기 시간을 120초로 연장
+            '-timeout', '60.0'  # [추가] 대기 시간을 60초로 연장
         ],
         output='screen'
     )

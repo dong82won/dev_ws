@@ -1,0 +1,37 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../external_ws/src/realsense-ros/realsense2_description"
+		}
+	],
+	"settings": {
+		"urdf-visualizer.packages": {
+			"boxbot_description": "${workspaceFolder}/boxbot_description",
+			"realsense2_description": "../../external_ws/src/realsense-ros/realsense2_description",
+			"universalbot_description": "${workspaceFolder}/universalbot_description"
+		},
+		"python.autoComplete.extraPaths": [
+			"/home/won/gazebo_ws/build/my_simulation",
+			"/home/won/gazebo_ws/install/my_simulation/lib/python3.10/site-packages",
+			"/home/won/dev_ws/build/custom_teleop_pkg",
+			"/home/won/dev_ws/install/custom_teleop_pkg/lib/python3.10/site-packages",
+			"/home/won/dev_ws/build/boxbot_bringup",
+			"/home/won/dev_ws/install/boxbot_bringup/lib/python3.10/site-packages",
+			"/opt/ros/humble/lib/python3.10/site-packages",
+			"/opt/ros/humble/local/lib/python3.10/dist-packages"
+		],
+		"python.analysis.extraPaths": [
+			"/home/won/gazebo_ws/build/my_simulation",
+			"/home/won/gazebo_ws/install/my_simulation/lib/python3.10/site-packages",
+			"/home/won/dev_ws/build/custom_teleop_pkg",
+			"/home/won/dev_ws/install/custom_teleop_pkg/lib/python3.10/site-packages",
+			"/home/won/dev_ws/build/boxbot_bringup",
+			"/home/won/dev_ws/install/boxbot_bringup/lib/python3.10/site-packages",
+			"/opt/ros/humble/lib/python3.10/site-packages",
+			"/opt/ros/humble/local/lib/python3.10/dist-packages"
+		]
+	}
+}

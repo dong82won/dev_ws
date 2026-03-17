@@ -147,10 +147,6 @@ Visualization Manager:
           Value: false
         left_wheel_link:
           Value: false
-        map:
-          Value: true
-        odom:
-          Value: false
         rear_caster_link:
           Value: true
         right_wheel_link:
@@ -161,26 +157,23 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          {}
-        odom:
-          base_footprint:
-            base_link:
-              camera_link:
-                camera_depth_optical_frame:
-                  {}
-              front_caster_link:
+        base_footprint:
+          base_link:
+            camera_link:
+              camera_depth_optical_frame:
                 {}
-              imu_link:
-                {}
-              laser_scan_link:
-                {}
-              left_wheel_link:
-                {}
-              rear_caster_link:
-                {}
-              right_wheel_link:
-                {}
+            front_caster_link:
+              {}
+            imu_link:
+              {}
+            laser_scan_link:
+              {}
+            left_wheel_link:
+              {}
+            rear_caster_link:
+              {}
+            right_wheel_link:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -205,7 +198,7 @@ Visualization Manager:
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 1
-      Size (m): 0.10000000149011612
+      Size (m): 0.05000000074505806
       Style: Flat Squares
       Topic:
         Depth: 5
@@ -303,7 +296,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -386,5 +379,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1850
-  X: 70
-  Y: 27
+  X: 736
+  Y: 586
