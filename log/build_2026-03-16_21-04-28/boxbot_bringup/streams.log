@@ -1,0 +1,30 @@
+[0.489s] Invoking command in '/home/won/dev_ws/build/boxbot_bringup': PYTHONPATH=/home/won/dev_ws/build/boxbot_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/won/dev_ws/install/boxbot_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/won/dev_ws/build/boxbot_bringup/build --no-deps symlink_data
+[0.623s] running develop
+[0.700s] running egg_info
+[0.700s] creating boxbot_bringup.egg-info
+[0.700s] writing boxbot_bringup.egg-info/PKG-INFO
+[0.700s] writing dependency_links to boxbot_bringup.egg-info/dependency_links.txt
+[0.701s] writing entry points to boxbot_bringup.egg-info/entry_points.txt
+[0.701s] writing requirements to boxbot_bringup.egg-info/requires.txt
+[0.701s] writing top-level names to boxbot_bringup.egg-info/top_level.txt
+[0.701s] writing manifest file 'boxbot_bringup.egg-info/SOURCES.txt'
+[0.702s] reading manifest file 'boxbot_bringup.egg-info/SOURCES.txt'
+[0.702s] writing manifest file 'boxbot_bringup.egg-info/SOURCES.txt'
+[0.703s] running build_ext
+[0.703s] Creating /home/won/dev_ws/install/boxbot_bringup/lib/python3.10/site-packages/boxbot-bringup.egg-link (link to .)
+[0.704s] 
+[0.704s] Installed /home/won/dev_ws/build/boxbot_bringup
+[0.704s] running symlink_data
+[0.704s] creating /home/won/dev_ws/install/boxbot_bringup/share/ament_index
+[0.704s] creating /home/won/dev_ws/install/boxbot_bringup/share/ament_index/resource_index
+[0.704s] creating /home/won/dev_ws/install/boxbot_bringup/share/ament_index/resource_index/packages
+[0.704s] symbolically linking /home/won/dev_ws/build/boxbot_bringup/resource/boxbot_bringup -> /home/won/dev_ws/install/boxbot_bringup/share/ament_index/resource_index/packages
+[0.704s] symbolically linking /home/won/dev_ws/build/boxbot_bringup/package.xml -> /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup
+[0.704s] creating /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup/launch
+[0.704s] symbolically linking /home/won/dev_ws/build/boxbot_bringup/launch/bringup.launch.py -> /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup/launch
+[0.704s] symbolically linking /home/won/dev_ws/build/boxbot_bringup/launch/slam.launch.py -> /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup/launch
+[0.704s] symbolically linking /home/won/dev_ws/build/boxbot_bringup/launch/localization.launch.py -> /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup/launch
+[0.704s] creating /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup/config
+[0.704s] symbolically linking /home/won/dev_ws/build/boxbot_bringup/config/ekf.yaml -> /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup/config
+[0.704s] symbolically linking /home/won/dev_ws/build/boxbot_bringup/config/mapper_params_online_async.yaml -> /home/won/dev_ws/install/boxbot_bringup/share/boxbot_bringup/config
+[0.720s] Invoked command in '/home/won/dev_ws/build/boxbot_bringup' returned '0': PYTHONPATH=/home/won/dev_ws/build/boxbot_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/won/dev_ws/install/boxbot_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/won/dev_ws/build/boxbot_bringup/build --no-deps symlink_data
