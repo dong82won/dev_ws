@@ -1,1 +1,0 @@
-/home/won/dev_ws/build/universalbot_description/ament_cmake_core/universalbot_descriptionConfig.cmake

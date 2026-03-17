@@ -1,1 +1,0 @@
-/home/won/dev_ws/src/boxbot_simulation/launch/start_world.launch.py

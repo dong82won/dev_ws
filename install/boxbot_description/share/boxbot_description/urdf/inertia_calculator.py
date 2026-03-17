@@ -1,1 +1,0 @@
-/home/won/dev_ws/src/boxbot_description/urdf/inertia_calculator.py
