@@ -8,7 +8,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     # 패키지 이름 설정 (사용자의 패키지명에 맞게 수정하세요)
-    package_name = 'my_box_bot_description'
+    package_name = 'boxbot_description'
     pkg_description = get_package_share_directory(package_name)
 
     # 1. Xacro 파일 경로 설정
