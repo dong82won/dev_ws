@@ -1,0 +1,55 @@
+/front_camera/camera:
+  ros__parameters:
+    # --- [기본 하드웨어 설정] ---
+    initial_reset: true         # 실행 시 카메라 초기화
+    enable_sync: true           # 프레임 동기화 활성화
+    clip_distance: 4.0          # 설정 거리(m) 이상의 데이터 커팅
+    use_sim_time: false         # 시뮬레이션 타임 사용 여부
+    global_time_enabled: true   # 장치 시간 대신 호스트 시스템 시간 사용
+    diagnostics_period: 0.0     # 진단 주기 (0: 비활성화)
+
+    # --- [스트림 활성화 제어] ---
+    enable_color: true
+    enable_depth: true
+    enable_infra1: false        # 적외선 1 비활성화
+    enable_infra2: false        # 적외선 2 비활성화
+    enable_confidence: false    # 신뢰도 스트림 비활성화
+
+    # --- [해상도 및 FPS 설정 (대역폭 핵심)] ---
+    depth_module.depth_profile: "640x480x30"
+    rgb_camera.color_profile: "640x480x30"
+
+    # --- [Depth -> Color 정렬] ---
+    align_depth.enable: true    # 컬러 이미지 좌표계로 깊이 정렬 (이미지 처리 필수)
+
+    # --- [Pointcloud (대역폭 킬러)] ---
+    pointcloud.enable: true
+    pointcloud.ordered_pc: true # 정렬된 포인트클라우드 (RViz 성능 향상)
+    pointcloud.allow_no_texture_points: true
+    pointcloud.stream_filter: 2 # 0:모두, 1:Depth, 2:Color
+    pointcloud.stream_index_filter: 0
+
+    # --- [IMU 설정] ---
+    enable_gyro: true
+    enable_accel: true
+    motion_module.global_time_enabled: true
+    unite_imu_method: 2         # 0:None, 1:Copy, 2:Linear Interpolation (권장)
+    accel_fps: 63
+    gyro_fps: 200
+
+    # --- [TF 및 메타데이터] ---
+    publish_tf: true  #true    # TF 좌표계 발행 # ✔ 반드시 false (imu_filter가 TF 담당)
+    tf_publish_rate: 10.0       # TF 발행 빈도 (0일 경우 수동 호출 시에만 발행될 수 있음)
+    enable_metadata: false      # 메타데이터 발행 중지 (CPU 절약)
+
+    # --- [필터 설정 (이미지 품질 개선 및 대역폭 조절)] ---
+    # Decimation 필터는 해상도를 낮추어 전송량을 획기적으로 줄여줍니다.
+    decimation_filter.enable: false  # 해상도를 낮춰서 포인트 수를 줄임
+    spatial_filter.enable: false
+    temporal_filter.enable: false
+    hole_filling_filter.enable: false
+
+    # --- [고급 설정: 로그 및 데이터 전송] ---
+    # 특정 토픽만 발행되도록 강제하는 설정 (토픽 리스트 정리용)
+    # 별도의 ros2 파라미터는 없으나 로깅 레벨로 제어 가능
+    log_level: "info"
