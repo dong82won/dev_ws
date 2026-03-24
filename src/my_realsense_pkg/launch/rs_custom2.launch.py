@@ -48,9 +48,9 @@ def generate_launch_description():
         name='imu_filter',
         # namespace='camera', # 제거 또는 유지 (RSP와 맞추는 것이 중요)
         parameters=[{
-            'use_mag': False,            
-            'publish_tf': True,          
-            'fixed_frame': 'odom',       
+            'use_mag': False,
+            'publish_tf': True,
+            'fixed_frame': 'odom',
             'base_frame': 'base_link',   # RSP의 base_link와 이름이 완벽히 일치해야 함
             'use_header_frame_id': False, # <--- 이 설정을 추가하여 헤더의 'camera_imu_optical_frame' 무시
             'gain': 0.1,
