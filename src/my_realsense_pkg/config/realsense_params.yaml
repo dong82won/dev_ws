@@ -7,10 +7,11 @@
     use_sim_time: false         # 시뮬레이션 타임 사용 여부
     global_time_enabled: true   # 장치 시간 대신 호스트 시스템 시간 사용
     diagnostics_period: 0.0     # 진단 주기 (0: 비활성화)
-
+    
+    
     # --- [스트림 활성화 제어] ---
-    enable_color: true
-    enable_depth: true
+    enable_color: false
+    enable_depth: false
     enable_infra1: false        # 적외선 1 비활성화
     enable_infra2: false        # 적외선 2 비활성화
     enable_confidence: false    # 신뢰도 스트림 비활성화
@@ -23,23 +24,27 @@
     align_depth.enable: true    # 컬러 이미지 좌표계로 깊이 정렬 (이미지 처리 필수)
 
     # --- [Pointcloud (대역폭 킬러)] ---
-    pointcloud.enable: true
-    pointcloud.ordered_pc: true # 정렬된 포인트클라우드 (RViz 성능 향상)
+    pointcloud.enable: false #true
+    # pointcloud.ordered_pc: true # 정렬된 포인트클라우드 (RViz 성능 향상)
+    pointcloud.ordered_pc: false  # CPU 부하를 줄이기 위해 false 권장
     pointcloud.allow_no_texture_points: true
     pointcloud.stream_filter: 2 # 0:모두, 1:Depth, 2:Color
     pointcloud.stream_index_filter: 0
 
     # --- [IMU 설정] ---
     enable_gyro: true
-    enable_accel: true
-    motion_module.global_time_enabled: true
+    enable_accel: true 
+    motion_module.global_time_enabled: true  # true에서 false로 변경
     unite_imu_method: 2         # 0:None, 1:Copy, 2:Linear Interpolation (권장)
-    accel_fps: 63
+    accel_fps: 200
     gyro_fps: 200
 
-    # --- [TF 및 메타데이터] ---
-    publish_tf: true  #true    # TF 좌표계 발행 # ✔ 반드시 false (imu_filter가 TF 담당)
-    tf_publish_rate: 10.0       # TF 발행 빈도 (0일 경우 수동 호출 시에만 발행될 수 있음)
+
+    # --- [TF 충돌 방지] ---
+    # TF 좌표계 발행 # ✔ 반드시 false (imu_filter가 TF 담당)
+    # Madgwick 필터가 odom(또는 world) -> camera_link의 회전을 담당하게 하려면 카메라 노드의 자체 TF 발행은 꺼주는 것이 정석입니다.
+    publish_tf: true
+    tf_publish_rate: 0.0       # TF 발행 빈도 (0일 경우 수동 호출 시에만 발행될 수 있음)
     enable_metadata: false      # 메타데이터 발행 중지 (CPU 절약)
 
     # --- [필터 설정 (이미지 품질 개선 및 대역폭 조절)] ---

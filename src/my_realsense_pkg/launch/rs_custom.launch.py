@@ -1,38 +1,33 @@
 import os
+import subprocess
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import xacro
 
 def generate_launch_description():
-    # 경로 설정
-    pkg_dir = get_package_share_directory('my_realsense_pkg')
+    # 1. 경로 설정
+    pkg_name = 'my_realsense_pkg'  # 사용자 패키지 이름
+    pkg_dir = get_package_share_directory(pkg_name)
     params_file = os.path.join(pkg_dir, 'config', 'realsense_params.yaml')
+    rviz_config_path = os.path.join(pkg_dir, 'rviz', 'urdf_vis.rviz')
 
-    # 1. RealSense 노드 (환경변수로 하드웨어 로그 차단)
+    # 2. RealSense 노드 (IMU 데이터 발행 핵심)
     realsense_node = Node(
         package='realsense2_camera',
         executable='realsense2_camera_node',
-        namespace='front_camera',  # YAML과 일치
-        name='camera',             # YAML과 일치
+        namespace='front_camera',
+        name='camera',
         parameters=[params_file],
         output='screen',
         arguments=['--ros-args', '--log-level', 'error'],
         env=dict(os.environ, LRS_LOG_LEVEL='error')
     )
 
-    # 2. Robot State Publisher (TF 생성용)
+    # 3. Robot State Publisher (카메라 모델 로드)
     desc_pkg_path = get_package_share_directory('realsense2_description')
     xacro_file = os.path.join(desc_pkg_path, 'urdf', 'test_d435i_camera.urdf.xacro')
-
-    # xacro 파일을 프로세싱합니다.
-    robot_description_config = xacro.process_file(xacro_file)
-
-    # 💡 해결책: .toxml() 대신 아래와 같이 작성해 보세요.
-    # 일부 버전에서는 doc 속성을 통해 접근해야 하거나, 직접 문자열로 변환해야 합니다.
-    # robot_desc = robot_description_config.toprettyxml(indent='  ')
-    robot_desc = robot_description_config.toxml() # type: ignore
-
+    robot_desc = subprocess.check_output(['xacro', xacro_file]).decode('utf-8')
 
     robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -42,37 +37,44 @@ def generate_launch_description():
         output='screen'
     )
 
-    # ===============================================================
-    # 4. IMU Filter (핵심: orientation → TF 생성)
-    # ===============================================================
+    # 4. IMU Filter Madgwick (트리 연결의 핵심)
     imu_filter_node = Node(
         package='imu_filter_madgwick',
         executable='imu_filter_madgwick_node',
         name='imu_filter',
+        
         parameters=[{
+            'gain': 0.05,
             'use_mag': False,
-            # 🔥 TF 생성 핵심 설정
-            'publish_tf': True,
-            'world_frame': 'enu',        # RViz Fixed Frame
-            'fixed_frame': 'base_link', # 회전 대상 (URDF와 반드시 일치)
-            'reverse_tf': False,
+            'publish_tf': False,
+            'world_frame': "enu",
+            'fixed_frame': "odom",
+            'stateless': False,
 
-            # 'constant_dt': 0.0,
-            # 'stateless': False
+            # 초기 자세를 즉시 잡을지 여부
+            # 'gain': 0.1,
+            # 'use_sensor_data': True,  # 🔥 핵심: Best Effort QoS를 사용하도록 설정
+            # # 추가: 데이터의 실제 좌표계를 명시적으로 알려줌
+            # 'publish_debug_topics': True,
+            # 'constant_dt': 0.005,      # 데이터 주기를 자동 계산
+            # 'orientation_stddev': 0.0,
+            # 'remove_gravity_vector': False,
+            # 'stateless': True       # 초기 정지 상태 확인 여부
         }],
+
         remappings=[
-            ('/imu/data_raw', '/front_camera/camera/imu')
+            ('/imu/data_raw', '/front_camera/camera/imu'),
+            ('/imu/data', '/front_camera/camera/imu/filtered')
         ],
         output='screen'
     )
 
-    rviz_config_dir = os.path.join(pkg_dir, 'rviz', 'urdf_vis.rviz')
-    # 4. RViz2
+    # 5. RViz2
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
-        # name='rviz2',
-        arguments=['-d', rviz_config_dir],
+        name='rviz2',
+        arguments=['-d', rviz_config_path],
         output='screen'
     )
 
@@ -80,5 +82,18 @@ def generate_launch_description():
         realsense_node,
         robot_state_publisher,
         imu_filter_node,
-        rviz_node
+        rviz_node,
+  
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     name='odom_to_enu_bridge',
+        #     arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link']
+        # ),
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'camera_imu_optical_frame']
+        #     )
+
     ])
