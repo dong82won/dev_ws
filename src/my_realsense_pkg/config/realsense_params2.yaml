@@ -1,0 +1,40 @@
+/camera/camera:
+  ros__parameters:
+    # --- 장치 기본 설정 ---
+    initial_reset: true               # 시작 시 장치 초기화 (연결 안정성)
+    device_type: 'd435i'              # 장치 모델 지정
+    
+    # --- 해상도 및 프레임 속도 (USB 3.0 권장 설정) ---
+    depth_module:
+      depth_profile: 640x480x30       # Depth 해상도 및 FPS
+      enable_auto_exposure: true      # 자동 노출 활성화
+
+    rgb_camera:
+      color_profile: 640x480x30       # RGB 해상도 및 FPS
+      enable_auto_exposure: true      # 자동 노출 활성화
+
+    # --- 핵심 기능 활성화 ---
+    enable_depth: true                # 깊이 데이터 활성화
+    enable_color: true                # 컬러 데이터 활성화
+    enable_infra1: false              # 적외선1 비활성화 (대역폭 절약)
+    enable_infra2: false              # 적외선2 비활성화
+
+    # --- 데이터 정렬 및 포인트클라우드 ---
+    align_depth.enable: true          # Depth를 RGB 좌표계로 정렬 (필수!)
+    pointcloud.enable: true           # 3D 점군 데이터 발행
+    pointcloud.ordered_pc: false      # 정렬된 점군 여부
+    pointcloud.stream_filter: 2       # <--- 이 줄을 추가하세요! (2번은 Color를 의미함)
+
+    # --- IMU (가속도계 & 자이로스코프) 설정 ---
+    enable_gyro: true                 # 자이로 활성화
+    enable_accel: true                # 가속도계 활성화
+    unite_imu_method: 2               # 0:None, 1:Copy, 2:Linear Interpolation (추천)
+    # gyro_fps: 200                     # IMU 샘플링 속도 (Madgwick 필터에 적합)
+    # accel_fps: 200
+    # qos_imu: 'SENSOR_DATA'
+    # --- 필터 및 데이터 정제 ---
+    clip_distance: 4.0                # 4미터 이상의 데이터는 절단 (노이즈 방지)
+    allow_no_texture_points: false    # 텍스처 없는 포인트 제외 여부
+
+    publish_tf: false
+    tf_publish_rate: 0.0       # TF 발행 빈도 (0일 경우 수동 호출 시에만 발행될 수 있음)
