@@ -20,9 +20,9 @@ def generate_launch_description():
     # 실제 기기 보정값을 읽어와 camera_link 하위의 렌즈 및 IMU TF를 완성하고 데이터를 쏩니다.
     realsense_node = Node(
         package='realsense2_camera',
-        executable='realsense2_camera_node',        
-        name='realsense_node',
+        executable='realsense2_camera_node',                
         namespace='camera',
+        name='realsense_node',
         output='screen',
         parameters=[{
             'enable_gyro': True,            # 자이로스코프 켜기
@@ -59,16 +59,17 @@ def generate_launch_description():
         parameters=[{
             'use_mag': False,               # 필수: D435i에는 지자기 센서가 없으므로 끕니다.
             'publish_tf': False,            # 필수: 기존 TF 트리를 망치지 않도록 필터 자체의 TF 발행을 끕니다.
-            'world_frame': 'enu'            # ROS 표준 좌표계(East-North-Up) 사용
+            'world_frame': 'enu',            # ROS 표준 좌표계(East-North-Up) 사용
+            # 'fixed_frame': 'odom',
+            # 'base_frame': 'base_link',   # RSP의 base_link와 
         }],
         remappings=[
             # 필터가 RealSense의 합쳐진 IMU 토픽을 구독하도록 연결
             ('/imu/data_raw', '/camera/realsense_node/imu'), 
             # 필터링이 완료된(방향이 포함된) IMU 토픽의 출력 이름
-            ('/imu/data', '/camera/camera/imu/filtered') 
+            ('/imu/data', '/imu/filtered') 
         ]
     )
-
     
 
     # D. RViz2 실행

@@ -20,10 +20,10 @@ def generate_launch_description():
     
     # A. RealSense 카메라 노드
     realsense_node = Node(
-        package='realsense2_camera',
-        namespace='camera',
+        package='realsense2_camera',        
         executable='realsense2_camera_node',
-        name='camera',
+        namespace='camera',
+        name='realsense_node',
         parameters=[params_file],
         output='screen'
     )
@@ -57,8 +57,8 @@ def generate_launch_description():
             'stateless': False           # 초기 방향 설정을 위해 False 권장                  
         }],
         remappings=[
-            ('/imu/data_raw', '/camera/camera/imu'), 
-            ('/imu/data', '/camera/imu/filtered')
+            ('/imu/data_raw', '/camera/realsense_node/imu'), 
+            ('/imu/data', '/imu/filtered') 
         ],
         output='screen'
     )
