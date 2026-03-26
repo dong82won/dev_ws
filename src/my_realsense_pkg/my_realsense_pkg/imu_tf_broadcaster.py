@@ -3,23 +3,60 @@ from rclpy.node import Node
 from sensor_msgs.msg import Imu
 from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
+import math
 
 class ImuTFBroadcaster(Node):
     def __init__(self):
         super().__init__('imu_tf_broadcaster')
+
+        # 1. 사용자 정의 파라미터 선언 (YAML에 없으면 이 기본값이 사용됨)
+        self.declare_parameter('q_offset', [0.5, -0.5, 0.5, 0.5])
+
+        # 참고: use_sim_time은 따로 선언(declare)하지 않아도 이미 존재함
+        # 하지만 명시적으로 확인하고 싶다면 아래와 같이 가져올 수 있음
+        sim_time_status = self.get_parameter('use_sim_time').value
+        self.get_logger().info(f'Use Simulation Time: {sim_time_status}')
+
+        # 2. 파라미터 값 로드
+        self.q_offset = self.get_parameter('q_offset').value
+
         self.br = TransformBroadcaster(self)
         self.subscription = self.create_subscription(Imu, '/imu/filtered', self.imu_callback, 10)
 
+
+    # 두 쿼터니언을 곱하여 회전을 합치는 수학 함수
+    def quaternion_multiply(self, q1, q2):
+        x1, y1, z1, w1 = q1[0], q1[1], q1[2], q1[3]
+        x2, y2, z2, w2 = q2[0], q2[1], q2[2], q2[3]
+        return [
+            w1*x2 + x1*w2 + y1*z2 - z1*y2,
+            w1*y2 - x1*z2 + y1*w2 + z1*x2,
+            w1*z2 + x1*y2 - y1*x2 + z1*w2,
+            w1*w2 - x1*x2 - y1*y2 - z1*z2
+        ]
+
     def imu_callback(self, msg):
         t = TransformStamped()
-        t.header.stamp = self.get_clock().now().to_msg()
+        
+        # 수정 전: t.header.stamp = self.get_clock().now().to_msg()
+        # 수정 후: 센서 데이터의 시간을 그대로 TF에 복사하여 동기화
+        t.header.stamp = msg.header.stamp
+
         t.header.frame_id = 'odom'        # 기준이 되는 세계
         t.child_frame_id = 'base_link'    # 회전시킬 로봇의 뿌리
 
-        # IMU로부터 받은 쿼터니언(회전) 값 그대로 적용
-        t.transform.rotation = msg.orientation
-
-        # 위치(xyz)는 고정 (원한다면 수정 가능)
+        # 1. 필터에서 나온 IMU 원본 회전 (광학 좌표계 기준)
+        q_orig = [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
+        
+        # 2. 광학 좌표계를 로봇 좌표계로 보정 (원본 * 오프셋)
+        q_final = self.quaternion_multiply(q_orig, self.q_offset)
+        
+        # 4. TF에 최종 값 적용
+        t.transform.rotation.x = q_final[0]
+        t.transform.rotation.y = q_final[1]
+        t.transform.rotation.z = q_final[2]
+        t.transform.rotation.w = q_final[3]
+        
         t.transform.translation.x = 0.0
         t.transform.translation.y = 0.0
         t.transform.translation.z = 0.0
@@ -29,5 +66,13 @@ class ImuTFBroadcaster(Node):
 def main():
     rclpy.init()
     node = ImuTFBroadcaster()
-    rclpy.spin(node)
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

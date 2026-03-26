@@ -33,10 +33,11 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'imu_tf_broadcaster_1 = my_realsense_pkg.imu_tf_broadcaster:main',
-            'imu_tf_broadcaster_2 = my_realsense_pkg.imu_tf_broadcaster2:main',
+            # 'imu_tf_broadcaster_1 = my_realsense_pkg.imu_tf_broadcaster:main',
+            # 'imu_tf_broadcaster_2 = my_realsense_pkg.imu_tf_broadcaster2:main',
             'imu_tf_broadcaster_3 = my_realsense_pkg.imu_tf_broadcaster3:main',
-            'imu_tf_broadcaster_4 = my_realsense_pkg.imu_tf_broadcaster4:main',
+            # 'imu_tf_broadcaster_4 = my_realsense_pkg.imu_tf_broadcaster4:main',
+            'imu_tf_broadcaster = my_realsense_pkg.imu_tf_broadcaster:main',
         ],
     },
 )

@@ -44,7 +44,10 @@ def generate_launch_description():
         name='robot_state_publisher',        
         parameters=[{
             'robot_description': robot_description_config.toxml(), # type: ignore
-            'publish_frequency': 30.0
+            'publish_frequency': 30.0,
+            'use_tf_static': True,       # 대역폭 절약을 위해 true 권장
+            'frame_prefix': "",           # 멀티 로봇이 아니라면 비워둠
+            'ignore_timestamp': False,    # 데이터 동기화를 위해 false(기본값) 권장
         }],
         output='screen'
     )

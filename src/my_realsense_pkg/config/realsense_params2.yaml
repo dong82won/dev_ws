@@ -1,9 +1,11 @@
-/camera/camera:
+# camera/realsense_node 경로에 맞춰 작성
+/camera/realsense_node:
   ros__parameters:
     # --- 장치 기본 설정 ---
-    initial_reset: true               # 시작 시 장치 초기화 (연결 안정성)
+    initial_reset: false      # 시작 시 장치 초기화 (연결 안정성)
+                              # 이미 에러가 난 상태에서 리셋하면 연결이 더 꼬일 수 있음    
     device_type: 'd435i'              # 장치 모델 지정
-    
+
     # --- 해상도 및 프레임 속도 (USB 3.0 권장 설정) ---
     depth_module:
       depth_profile: 640x480x30       # Depth 해상도 및 FPS
@@ -36,5 +38,35 @@
     clip_distance: 4.0                # 4미터 이상의 데이터는 절단 (노이즈 방지)
     allow_no_texture_points: false    # 텍스처 없는 포인트 제외 여부
 
-    publish_tf: false
+    publish_tf: True
     tf_publish_rate: 0.0       # TF 발행 빈도 (0일 경우 수동 호출 시에만 발행될 수 있음)
+
+
+imu_filter:
+  ros__parameters:
+    # --- 필수 설정 (기본값 수정) ---
+    use_mag: false           # D435i는 6축이므로 반드시 false
+    world_frame: "enu"       # ROS 표준 좌표계
+    publish_tf: false        # EKF(Robot Localization)를 별도로 쓴다면 반드시 false
+
+    # --- 알고리즘 튜닝 (D435i 특화) ---
+    gain: 0.05              # 추천: 0.01 ~ 0.1 사이.
+                            # 낮을수록 자이로(회전) 의존도가 높아져 부드럽지만,
+                            # 너무 낮으면 초기 자세를 잡는 데 오래 걸림.
+
+    zeta: 0.001              # 자이로 바이어스 드리프트 보정. 0.0에서 약간만 높임.
+
+    # --- 데이터 품질 설정 ---
+    constant_dt: 0.0         # 0.0으로 두어 실제 패킷 타임스탬프 간격 사용
+    remove_gravity_vector: false # 보통 EKF에서 중력 포함 데이터를 원하므로 false 권장
+
+    # --- 공분산(Covariance) 최적화 ---
+    # EKF나 SLAM 입력으로 쓸 때 이 값이 너무 작으면 필터가 진동함
+    orientation_stddev: 0.05 # 예측 오차 범위를 약간 넉넉히 잡아 튐 현상 방지
+
+imu_tf_broadcaster:
+  ros__parameters:
+    use_sim_time: false
+    # [x, y, z, w] 순서로 리스트 형태로 저장
+    q_offset: [0.5, -0.5, 0.5, 0.5]
+

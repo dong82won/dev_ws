@@ -28,7 +28,7 @@ def generate_launch_description():
     ])
 
     # B. Robot State Publisher (네임스페이스 제거 권장)
-    robot_state_publisher = Node(
+    rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
@@ -51,9 +51,17 @@ def generate_launch_description():
         executable='realsense2_camera_node',
         namespace='camera',
         name='realsense_node',
+        # parameters=[{
+        #     'enable_gyro': True,            # 자이로스코프 켜기
+        #     'enable_accel': True,           # 가속도계 켜기
+        #     'unite_imu_method': 2,          # 중요: accel과 gyro를 하나의 /camera/imu 토픽으로 합침 (2 = linear_interpolation)
+        #     'enable_sync': True,            # 이미지와 IMU 데이터의 타임스탬프 동기화
+        #     'publish_tf': True,             # 기본값이지만, 카메라 내부 TF를 쏘도록 확실히 활성화
+        #     'pointcloud.enable': True,           # 3D 점군 데이터 발행
+        #     'pointcloud.ordered_pc': False,      # 정렬된 점군 여부
+        #     'pointcloud.stream_filter': 2       # <--- 이 줄을 추가하세요! (2번은 Color를 의미함)
+        # }],
         parameters=[params_file],
-        arguments=['--ros-args', '--log-level', 'error'],
-        env=dict(os.environ, LRS_LOG_LEVEL='error'),
         output='screen',
     )
 
@@ -64,6 +72,13 @@ def generate_launch_description():
         executable='imu_filter_madgwick_node',
         name='imu_filter',
         output='screen',
+        # parameters=[{
+        #     'use_mag': False,               # 필수: D435i에는 지자기 센서가 없으므로 끕니다.
+        #     'publish_tf': False,            # 필수: 기존 TF 트리를 망치지 않도록 필터 자체의 TF 발행을 끕니다.
+        #     'world_frame': 'enu',            # ROS 표준 좌표계(East-North-Up) 사용
+        #     # 'fixed_frame': 'odom',
+        #     # 'base_frame': 'base_link',   # RSP의 base_link와 
+        # }],
         parameters=[params_file],
         remappings=[
             # 필터가 RealSense의 합쳐진 IMU 토픽을 구독하도록 연결
@@ -79,24 +94,13 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        # INFO 메시지 차단
-        arguments=['-d', rviz_config_path,'--ros-args', '--log-level', 'warn'],        
-        output='screen'
-    )
-
-    # 업로드하신 IMU TF 브로드캐스터 노드
-    imu_tf_node = Node(
-        package=pkg_name,
-        executable='imu_tf_broadcaster', # setup.py에 등록된 이름
-        name='imu_tf_broadcaster',
-        parameters=[params_file],
+        arguments=['-d', rviz_config_path],
         output='screen'
     )
 
     return LaunchDescription([
         realsense_node,
-        imu_filter_node,
-        imu_tf_node,
-        robot_state_publisher,
+        imu_filter_node,        
+        rsp_node,        
         rviz_node
     ])
