@@ -34,7 +34,7 @@ class ImuTFBroadcaster(Node):
 
         # 1. 필터에서 나온 IMU 원본 회전 (광학 좌표계 기준)
         q_orig = [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]
-        
+
         # 2. 광학 좌표계를 로봇 좌표계로 보정 (원본 * 오프셋)
         q_final = self.quaternion_multiply(q_orig, self.q_offset)
 
@@ -43,7 +43,7 @@ class ImuTFBroadcaster(Node):
         t.transform.rotation.y = q_final[1]
         t.transform.rotation.z = q_final[2]
         t.transform.rotation.w = q_final[3]
-        
+
         t.transform.translation.x = 0.0
         t.transform.translation.y = 0.0
         t.transform.translation.z = 0.0

@@ -1,0 +1,136 @@
+<robot name="cybertruck" version="1.0">
+  <joint name="front_left_wheel" type="continuous">
+    <limit effort="0.00000" velocity="0.00000"/>
+    <origin rpy="1.57080 0.00000 -3.14159" xyz="1.92193 0.91457 -0.66346"/>
+    <parent link="base_link"/>
+    <child link="front_left_wheel_link"/>
+    <axis xyz="0.00000 0.00000 1.00000"/>
+  </joint>
+  <joint name="front_right_wheel" type="continuous">
+    <limit effort="0.00000" velocity="0.00000"/>
+    <origin rpy="1.57080 0.00000 -3.14159" xyz="1.92193 -0.91457 -0.66346"/>
+    <parent link="base_link"/>
+    <child link="front_right_wheel_link"/>
+    <axis xyz="0.00000 0.00000 1.00000"/>
+  </joint>
+  <joint name="rear_left_wheel" type="continuous">
+    <limit effort="0.00000" velocity="0.00000"/>
+    <origin rpy="1.57080 0.00000 -3.14159" xyz="-1.97228 0.91457 -0.66346"/>
+    <parent link="base_link"/>
+    <child link="rear_left_wheel_link"/>
+    <axis xyz="0.00000 0.00000 1.00000"/>
+  </joint>
+  <joint name="rear_right_wheel" type="continuous">
+    <limit effort="0.00000" velocity="0.00000"/>
+    <origin rpy="1.57080 0.00000 -3.14159" xyz="-1.97227 -0.91457 -0.66346"/>
+    <parent link="base_link"/>
+    <child link="rear_right_wheel_link"/>
+    <axis xyz="0.00000 0.00000 1.00000"/>
+  </joint>
+  <link name="base_link">
+    <collision name="Body_Plane.001_collision">
+      <origin rpy="0.00000 0.00000 0.00000" xyz="-0.20086 -0.00081 0.01244"/>
+      <geometry>
+        <box size="5.98786 2.07203 1.48331"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="13.52818" ixy="0.00000" ixz="0.00000" iyy="79.28069" iyz="0.00000" izz="83.64131"/>
+      <origin rpy="0.00000 0.00000 0.00000" xyz="-0.20086 -0.00081 0.01244"/>
+      <mass value="25.00000"/>
+    </inertial>
+    <visual name="Body_Plane.001">
+      <material name="Metal_Bodywork"/>
+      <origin rpy="1.57080 0.00000 -3.14159" xyz="0.00000 -0.00000 0.00000"/>
+      <geometry>
+        <mesh filename="package://cybertruck_description/meshes/dae/Body_Plane.001.dae" scale="1.00000 1.00000 1.00000"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="front_left_wheel_link">
+    <collision name="FL_Circle.009_collision">
+      <origin rpy="-0.00000 0.00000 1.06354" xyz="-0.00000 -0.00000 -0.01128"/>
+      <geometry>
+        <cylinder radius="0.47736" length="0.41712"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="0.07147" ixy="0.00000" ixz="0.00000" iyy="0.11394" iyz="0.00000" izz="0.07147"/>
+      <origin rpy="0.00000 0.00000 0.00000" xyz="-0.00000 -0.00000 -0.01128"/>
+      <mass value="1.00000"/>
+    </inertial>
+    <visual name="FL_Circle.009">
+      <material name="Tire"/>
+      <origin rpy="-0.00000 -0.00000 0.53177" xyz="0.00000 0.00000 -0.00000"/>
+      <geometry>
+        <mesh filename="package://cybertruck_description/meshes/dae/FL_Circle.009.dae" scale="1.00000 1.00000 1.00000"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="front_right_wheel_link">
+    <collision name="FR_Circle.010_collision">
+      <origin rpy="-0.00000 0.00000 -0.00000" xyz="-0.00000 0.00000 0.01128"/>
+      <geometry>
+        <cylinder radius="0.47736" length="0.41712"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="0.07147" ixy="-0.00000" ixz="-0.00000" iyy="0.11394" iyz="0.00000" izz="0.07147"/>
+      <origin rpy="0.00000 0.00000 0.00000" xyz="-0.00000 0.00000 0.01128"/>
+      <mass value="1.00000"/>
+    </inertial>
+    <visual name="FR_Circle.010">
+      <material name="Tire"/>
+      <origin rpy="-0.00000 -0.00000 -0.00000" xyz="0.00000 0.00000 -0.00000"/>
+      <geometry>
+        <mesh filename="package://cybertruck_description/meshes/dae/FR_Circle.010.dae" scale="1.00000 1.00000 1.00000"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="rear_left_wheel_link">
+    <collision name="RL_Circle.011_collision">
+      <origin rpy="-0.00000 0.00000 -0.00000" xyz="-0.00000 0.00000 -0.01128"/>
+      <geometry>
+        <cylinder radius="0.47736" length="0.41712"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="0.07147" ixy="-0.00000" ixz="-0.00000" iyy="0.11394" iyz="0.00000" izz="0.07147"/>
+      <origin rpy="0.00000 0.00000 0.00000" xyz="-0.00000 0.00000 -0.01128"/>
+      <mass value="1.00000"/>
+    </inertial>
+    <visual name="RL_Circle.011">
+      <material name="Tire"/>
+      <origin rpy="-0.00000 -0.00000 -0.00000" xyz="0.00000 0.00000 -0.00000"/>
+      <geometry>
+        <mesh filename="package://cybertruck_description/meshes/dae/RL_Circle.011.dae" scale="1.00000 1.00000 1.00000"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="rear_right_wheel_link">
+    <collision name="RR_Circle.012_collision">
+      <origin rpy="-0.00000 0.00000 -0.00000" xyz="-0.00000 0.00000 0.01128"/>
+      <geometry>
+        <cylinder radius="0.47736" length="0.41712"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <inertia ixx="0.07147" ixy="-0.00000" ixz="-0.00000" iyy="0.11394" iyz="0.00000" izz="0.07147"/>
+      <origin rpy="0.00000 0.00000 0.00000" xyz="-0.00000 0.00000 0.01128"/>
+      <mass value="1.00000"/>
+    </inertial>
+    <visual name="RR_Circle.012">
+      <material name="Tire"/>
+      <origin rpy="-0.00000 -0.00000 -0.00000" xyz="-0.00000 0.00000 -0.00000"/>
+      <geometry>
+        <mesh filename="package://cybertruck_description/meshes/dae/RR_Circle.012.dae" scale="1.00000 1.00000 1.00000"/>
+      </geometry>
+    </visual>
+  </link>
+  <material name="Metal_Bodywork">
+    <color rgba="0.80000 0.80000 0.80000 1.00000"/>
+  </material>
+  <material name="Tire">
+    <color rgba="0.00000 0.00000 0.00000 1.00000"/>
+  </material>
+</robot>

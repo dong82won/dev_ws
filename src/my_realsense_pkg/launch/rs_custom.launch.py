@@ -67,12 +67,12 @@ def generate_launch_description():
         parameters=[params_file],
         remappings=[
             # 필터가 RealSense의 합쳐진 IMU 토픽을 구독하도록 연결
-            ('/imu/data_raw', '/camera/realsense_node/imu'), 
+            ('/imu/data_raw', '/camera/realsense_node/imu'),
             # 필터링이 완료된(방향이 포함된) IMU 토픽의 출력 이름
-            ('/imu/data', '/imu/filtered') 
+            ('/imu/data', '/imu/filtered')
         ]
     )
-    
+
     rviz_config_path = os.path.join(pkg_share, 'rviz', 'rviz2.rviz')
     # D. RViz2 실행
     rviz_node = Node(
@@ -80,7 +80,7 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         # INFO 메시지 차단
-        arguments=['-d', rviz_config_path,'--ros-args', '--log-level', 'warn'],        
+        arguments=['-d', rviz_config_path,'--ros-args', '--log-level', 'warn'],
         output='screen'
     )
 
