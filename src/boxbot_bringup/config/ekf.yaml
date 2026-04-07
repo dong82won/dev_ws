@@ -2,8 +2,10 @@
 ekf_filter_node:
   ros__parameters:
     use_sim_time: true
-    frequency: 30.0
-    sensor_timeout: 0.1
+    # 데이터가 오지 않아도 50Hz 주기를 강제로 유지하게 합니다.
+    predict_to_current_time: true
+    frequency: 50.0 #(30.0 -> 50.0) # EKF 업데이트 주기 (Hz)
+    sensor_timeout: 0.02
     two_d_mode: true  # 2D 평면 주행 시 true
     publish_tf: true
 

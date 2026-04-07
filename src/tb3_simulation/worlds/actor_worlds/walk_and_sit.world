@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="fix_repeat_world">
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <actor name="human_actor">
+      <skin><filename>stand.dae</filename></skin>
+      
+      <animation name="ani_sitting">
+        <filename>sitting.dae</filename>
+      </animation>
+      <animation name="ani_stand_up">
+        <filename>stand_up.dae</filename>
+      </animation>
+      <animation name="ani_walking">
+        <filename>walk.dae</filename>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <animation name="ani_sit_down">
+        <filename>sit_down.dae</filename>
+      </animation>
+      <animation name="ani_stand">
+        <filename>stand.dae</filename>
+      </animation>
+
+      <script>
+        <loop>true</loop>
+        <delay_start>0.0</delay_start>
+        <auto_start>true</auto_start>
+
+        <trajectory id="0" type="ani_sitting">
+          <waypoint><time>0</time><pose>0 0 0 0 0 0</pose></waypoint>
+          <waypoint><time>1</time><pose>0 0 0 0 0 0</pose></waypoint>
+        </trajectory>
+        <trajectory id="1" type="ani_stand_up">
+          <waypoint><time>1</time><pose>0 0 0 0 0 0</pose></waypoint>
+          <waypoint><time>3</time><pose>0 0 0 0 0 0</pose></waypoint>
+        </trajectory>
+        <trajectory id="2" type="ani_walking">
+          <waypoint><time>3</time><pose>0 0 0 0 0 0</pose></waypoint>
+          <waypoint><time>8</time><pose>3 0 0 0 0 0</pose></waypoint>
+        </trajectory>
+        <trajectory id="3" type="ani_stand">
+            <waypoint><time>8  </time><pose>3 0 0 0 0 0   </pose></waypoint>
+            <waypoint><time>8.5</time><pose>3 0 0 0 0 1.05</pose></waypoint>
+            <waypoint><time>9  </time><pose>3 0 0 0 0 2.10</pose></waypoint>
+            <waypoint><time>9.5</time><pose>3 0 0 0 0 3.14</pose></waypoint>
+        </trajectory>
+        <trajectory id="4" type="ani_walking">
+          <waypoint><time>9.5</time><pose>3 0 0 0 0 3.14</pose></waypoint>
+          <waypoint><time>12.5</time><pose>0 0 0 0 0 3.14</pose></waypoint>
+        </trajectory>
+        <trajectory id="5" type="ani_stand">
+          <waypoint><time>12.5</time><pose>0 0 0 0 0 3.14</pose></waypoint>
+          <waypoint><time>13.0</time><pose>0 0 0 0 0 1.57</pose></waypoint>
+          <waypoint><time>13.5</time><pose>0 0 0 0 0 0   </pose></waypoint>
+        </trajectory>
+
+        <trajectory id="6" type="ani_sit_down">
+          <waypoint><time>13.5</time><pose>0 0 0 0 0 0</pose></waypoint>
+          <waypoint><time>13.6</time><pose>0 0 0 0 0 0</pose></waypoint>
+        </trajectory>
+        
+      </script>
+    </actor>
+  </world>
+</sdf>

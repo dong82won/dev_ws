@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="human_action_world">
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <actor name="human_actor">
+      <skin>
+        <filename>stand.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+
+      <animation name="action_stand">
+        <filename>stand.dae</filename>
+        <interpolate_x>false</interpolate_x>
+      </animation>
+      <animation name="action_sit_down">
+        <filename>sit_down.dae</filename>
+        <interpolate_x>false</interpolate_x>
+      </animation>
+      <animation name="action_sitting">
+        <filename>sitting.dae</filename>
+        <interpolate_x>false</interpolate_x>
+      </animation>
+      <animation name="action_stand_up">
+        <filename>stand_up.dae</filename>
+        <interpolate_x>false</interpolate_x>
+      </animation>
+
+      <script>
+        <loop>true</loop>
+        <delay_start>0.0</delay_start>
+        <auto_start>true</auto_start>
+
+        <trajectory id="0" type="action_stand">
+          <waypoint>
+            <time>0</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>2</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+        </trajectory>
+        <trajectory id="1" type="action_sit_down">
+          <waypoint>
+            <time>2</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>4</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+        </trajectory>
+        <trajectory id="2" type="action_sitting">
+          <waypoint>
+            <time>4</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>7</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+        </trajectory>
+        <trajectory id="3" type="action_stand_up">
+          <waypoint>
+            <time>7</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>9</time>
+            <pose>0 0 0 0 0 0</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
+  </world>
+</sdf>

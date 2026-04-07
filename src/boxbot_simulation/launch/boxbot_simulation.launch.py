@@ -42,6 +42,7 @@ def generate_launch_description():
     x_pose = LaunchConfiguration('x_pose')
     y_pose = LaunchConfiguration('y_pose')
     z_pose = LaunchConfiguration('z_pose')
+    
     use_rviz = LaunchConfiguration('use_rviz')
 
     # 3. 월드 실행

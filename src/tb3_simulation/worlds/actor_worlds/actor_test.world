@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <actor name="animated_box">
+      <script>
+        <loop>true</loop>
+        <delay_start>0.0</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="square">
+           <waypoint>
+              <time>0.0</time>
+              <pose>0 0 0.5 0 0 0</pose>
+           </waypoint>
+           <waypoint>
+              <time>2.0</time>
+              <pose>2 0 0.5 0 0 0</pose>
+           </waypoint>
+           <waypoint>
+              <time>4.0</time>
+              <pose>2 2 0.5 0 0 0</pose>
+           </waypoint>
+           <waypoint>
+              <time>6.0</time>
+              <pose>0 0 0.5 0 0 0</pose>
+           </waypoint>
+        </trajectory>
+      </script>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Red</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+        </collision>
+      </link>
+    </actor>
+  </world>
+</sdf>

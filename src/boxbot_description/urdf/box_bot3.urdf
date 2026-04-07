@@ -258,7 +258,7 @@
             <ros>
                 <remapping>~/out:=joint_states</remapping>
             </ros>
-            <update_rate>30</update_rate>
+            <update_rate>50</update_rate>
             <joint_name>left_wheel_joint</joint_name>
             <joint_name>right_wheel_joint</joint_name>
         </plugin>
@@ -271,8 +271,7 @@
                 <remapping>cmd_vel:=cmd_vel</remapping>
                 <remapping>odom:=odom</remapping>
             </ros>
-
-            <update_rate>30</update_rate>
+            <update_rate>50</update_rate>
 
             <!-- <num_wheel_pairs>1</num_wheel_pairs> -->
 
@@ -350,7 +349,7 @@
     </gazebo>
 
     <gazebo reference="laser_scan_link">
-        <sensor name="lidar_sensor" type="gpu_ray">
+        <sensor name="lidar_sensor" type="ray">
             <always_on>true</always_on>
             <visualize>false</visualize>
             <update_rate>10</update_rate>
@@ -377,6 +376,7 @@
             <plugin name="scan_controller" filename="libgazebo_ros_ray_sensor.so">
                 <ros>
                     <remapping>~/out:=scan</remapping>
+                    <use_sim_time>true</use_sim_time> 
                 </ros>
                 <output_type>sensor_msgs/LaserScan</output_type>
                 <frame_name>laser_scan_link</frame_name>
@@ -390,44 +390,14 @@
             <update_rate>100</update_rate>
             <imu>
                 <angular_velocity>
-                    <x>
-                        <noise type="gaussian">
-                            <mean>0.0</mean>
-                            <stddev>2e-4</stddev>
-                        </noise>
-                    </x>
-                    <y>
-                        <noise type="gaussian">
-                            <mean>0.0</mean>
-                            <stddev>2e-4</stddev>
-                        </noise>
-                    </y>
-                    <z>
-                        <noise type="gaussian">
-                            <mean>0.0</mean>
-                            <stddev>2e-4</stddev>
-                        </noise>
-                    </z>
+                    <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></z>
                 </angular_velocity>
                 <linear_acceleration>
-                    <x>
-                        <noise type="gaussian">
-                            <mean>0.0</mean>
-                            <stddev>1.7e-2</stddev>
-                        </noise>
-                    </x>
-                    <y>
-                        <noise type="gaussian">
-                            <mean>0.0</mean>
-                            <stddev>1.7e-2</stddev>
-                        </noise>
-                    </y>
-                    <z>
-                        <noise type="gaussian">
-                            <mean>0.0</mean>
-                            <stddev>1.7e-2</stddev>
-                        </noise>
-                    </z>
+                    <x><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></z>
                 </linear_acceleration>
             </imu>
             <plugin name="bytes_imu" filename="libgazebo_ros_imu_sensor.so">
@@ -436,6 +406,7 @@
                     <remapping>~/out:=data</remapping>
                 </ros>
                 <initial_orientation_as_reference>false</initial_orientation_as_reference>
+                <gaussianNoise>0.01</gaussianNoise>
             </plugin>
         </sensor>
     </gazebo>

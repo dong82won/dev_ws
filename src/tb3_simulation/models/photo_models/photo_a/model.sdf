@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="photo_a">
+    <static>true</static>
+    <link name="link">
+      <inertial>
+        <mass>1.5</mass>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <!-- 가로 50cm 높이 70cm 두께 2cm -->
+          <box><size>0.5 0.022 0.7</size></box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://photo_a/meshes/my_photo_frame_visual.DAE</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>
