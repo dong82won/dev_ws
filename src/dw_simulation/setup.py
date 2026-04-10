@@ -2,19 +2,19 @@ import os
 from glob import glob
 from setuptools import find_packages, setup
 
-package_name = 'tb3_simulation'
+package_name = 'dw_simulation'
 
 def get_recursive_data_files(directory, install_base):
     """
     directory: 소스 폴더 (예: 'models')
-    install_base: 설치될 기본 경로 (예: 'share/tb3_simulation')
+    install_base: 설치될 기본 경로 (예: 'share/dw_simulation')
     결과: (설치될 경로, [파일들]) 형태의 리스트 반환
     """
     data_files = []
     for root, dirs, files in os.walk(directory):
         if files:
             # 1. 소스 경로(root)를 설치 경로로 변환
-            # 예: 'models/Photo_models/my_photo_frame' -> 'share/tb3_simulation/models/Photo_models/my_photo_frame'
+            # 예: 'models/Photo_models/my_photo_frame' -> 'share/dw_simulation/models/Photo_models/my_photo_frame'
             install_dir = os.path.join(install_base, root)
             # 2. 해당 폴더 내의 모든 파일 경로 리스트업
             file_paths = [os.path.join(root, f) for f in files]
@@ -30,6 +30,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # Launch 파일 설치
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
+        (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
     ]
     # worlds 폴더 및 하위 actor_worlds 등 계층 유지 설치
     + get_recursive_data_files('worlds', os.path.join('share', package_name))
@@ -45,9 +46,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'simple_drive = tb3_simulation.simple_drive:main',
-            'waypoint_drive = tb3_simulation.waypoint_drive:main',
-            'waypoint_drive2 = tb3_simulation.waypoint_drive2:main',
+            'simple_drive = dw_simulation.simple_drive:main',
+            'waypoint_drive = dw_simulation.waypoint_drive:main',
+            'waypoint_drive2 = dw_simulation.waypoint_drive2:main',
         ],
     },
 )

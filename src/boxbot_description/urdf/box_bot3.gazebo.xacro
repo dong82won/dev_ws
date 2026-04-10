@@ -1,45 +1,12 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <gazebo reference="camera_link">
-        <sensor name="camera" type="depth">
-            <visualize>true</visualize>
-            <update_rate>30.0</update_rate>
-            <camera name="camera">
-                <horizontal_fov>1.5184</horizontal_fov>
-                <image>
-                    <width>640</width>
-                    <height>480</height>
-                    <format>R8G8B8</format>
-                </image>
-                <clip>
-                    <near>0.1</near>
-                    <far>10.0</far>
-                </clip>
-            </camera>
-            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-                <ros>
-                    <namespace>camera</namespace>
-                    <remapping>camera/image_raw:=color/image_raw</remapping>
-                    <remapping>camera/depth/image_raw:=depth/image_rect_raw</remapping>
-                    <remapping>camera/camera_info:=color/camera_info</remapping>
-                    <remapping>camera/depth/camera_info:=depth/camera_info</remapping>
-                    <remapping>camera/points:=depth/color/points</remapping>
-                </ros>
-                <camera_name>d435i</camera_name>
-                <frame_name>camera_depth_optical_frame</frame_name> <hack_baseline>0.07</hack_baseline>
-                <min_depth>0.1</min_depth>
-                <max_depth>5.0</max_depth>
-            </plugin>
-        </sensor>
-    </gazebo>
-
     <gazebo>
         <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
             <ros>
                 <remapping>~/out:=joint_states</remapping>
             </ros>
-            <update_rate>30</update_rate>
+            <update_rate>50</update_rate>
             <joint_name>left_wheel_joint</joint_name>
             <joint_name>right_wheel_joint</joint_name>
         </plugin>
@@ -47,20 +14,129 @@
 
     <gazebo>
         <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+            <ros>
+                <namespace>/</namespace>
+                <remapping>cmd_vel:=cmd_vel</remapping>
+                <remapping>odom:=odom</remapping>
+            </ros>
+            <update_rate>50</update_rate>
+
             <left_joint>left_wheel_joint</left_joint>
             <right_joint>right_wheel_joint</right_joint>
-            <wheel_separation>${wheel_ygap * 2}</wheel_separation>
-            <wheel_diameter>${wheel_radius * 2}</wheel_diameter>
 
-            <max_wheel_torque>1.0</max_wheel_torque>
-            <max_wheel_acceleration>2.0</max_wheel_acceleration>
+            <wheel_separation>0.12</wheel_separation>
+            <wheel_diameter>0.07</wheel_diameter>
+
+            <!-- <max_wheel_torque>5.0</max_wheel_torque> 
+            <max_wheel_acceleration>0.5</max_wheel_acceleration> -->
+
+            <max_wheel_torque>100</max_wheel_torque> 
+            <max_wheel_acceleration>0.7</max_wheel_acceleration> 
 
             <publish_odom>true</publish_odom>
-            <publish_odom_tf>true</publish_odom_tf>
+
+            <publish_odom_tf>false</publish_odom_tf> 
+
+            <publish_wheel_tf>false</publish_wheel_tf>
+            <odometry_frame>odom</odometry_frame>
+            <robot_base_frame>base_footprint</robot_base_frame>
+
+            <covariance_x>0.05</covariance_x>
+            <covariance_y>0.05</covariance_y>
+            <covariance_yaw>0.1</covariance_yaw>
+<!-- 
+            <publish_odom>true</publish_odom>
+            <publish_odom_tf>false</publish_odom_tf> 
+            <publish_wheel_tf>false</publish_wheel_tf>
 
             <odometry_frame>odom</odometry_frame>
             <robot_base_frame>base_footprint</robot_base_frame>
+
+            <covariance_x>0.001</covariance_x>
+            <covariance_y>0.001</covariance_y>
+            <covariance_yaw>0.01</covariance_yaw> -->
         </plugin>
+    </gazebo>
+
+    <gazebo reference="camera_link">
+        <visual>
+            <material>
+                <ambient>0.3 0.3 0.3 1.0</ambient>
+                <diffuse>0.3 0.3 0.3 1.0</diffuse>
+                <specular>0.01 0.01 0.01 1.0</specular>
+                <emissive>0.0 0.0 0.0 1.0</emissive>
+            </material>
+        </visual>
+        <sensor name="camera" type="depth">
+            <always_on>true</always_on>
+            <visualize>true</visualize>
+            <update_rate>15.0</update_rate>
+
+            <camera name="d435i">
+                <horizontal_fov>1.5184</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.105</near>
+                    <far>10.0</far>
+                </clip>
+            </camera>
+
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <ros>
+                    <namespace>camera</namespace>
+                    <remapping>d435i/image_raw:=color/image_raw</remapping>
+                    <remapping>d435i/camera_info:=color/camera_info</remapping>
+                    <remapping>d435i/depth/image_raw:=depth/image_rect_raw</remapping>
+                    <remapping>d435i/depth/camera_info:=depth/camera_info</remapping>
+                    <remapping>d435i/points:=depth/color/points</remapping>
+                </ros>
+                <camera_name>d435i</camera_name>
+                <frame_name>camera_depth_optical_frame</frame_name>
+                <hack_baseline>0.05</hack_baseline>
+                <min_depth>0.105</min_depth>
+                <max_depth>10.0</max_depth>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <gazebo reference="laser_scan_link">
+        <sensor name="lidar_sensor" type="ray">
+            <always_on>true</always_on>
+            <visualize>true</visualize> 
+            <update_rate>10</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1.0</resolution>
+                        <min_angle>-3.14159</min_angle>
+                        <max_angle>3.14159</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.12</min>
+                    <max>8.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <plugin name="scan_controller" filename="libgazebo_ros_ray_sensor.so">
+                <ros>
+                    <remapping>~/out:=scan</remapping>
+                    <use_sim_time>true</use_sim_time> 
+                </ros>
+                <output_type>sensor_msgs/LaserScan</output_type>
+                <frame_name>laser_scan_link</frame_name>
+            </plugin>
+        </sensor>
     </gazebo>
 
     <gazebo reference="imu_link">
@@ -85,36 +161,7 @@
                     <remapping>~/out:=data</remapping>
                 </ros>
                 <initial_orientation_as_reference>false</initial_orientation_as_reference>
-            </plugin>
-        </sensor>
-    </gazebo>
-
-    <gazebo reference="laser_scan_link">
-        <sensor name="lidar" type="ray">
-            <always_on>true</always_on>
-            <visualize>true</visualize>
-            <update_rate>10</update_rate>
-            <ray>
-                <scan>
-                    <horizontal>
-                        <samples>360</samples>
-                        <resolution>1.0</resolution>
-                        <min_angle>0.00</min_angle>
-                        <max_angle>6.28</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>0.12</min>
-                    <max>12.0</max>
-                    <resolution>0.015</resolution>
-                </range>
-            </ray>
-            <plugin name="scan_controller" filename="libgazebo_ros_ray_sensor.so">
-                <ros>
-                    <remapping>~/out:=scan</remapping>
-                </ros>
-                <output_type>sensor_msgs/LaserScan</output_type>
-                <frame_name>laser_scan_link</frame_name>
+                <gaussianNoise>0.01</gaussianNoise>
             </plugin>
         </sensor>
     </gazebo>
