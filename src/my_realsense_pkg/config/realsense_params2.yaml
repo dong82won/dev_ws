@@ -2,17 +2,17 @@
 /camera/realsense_node:
   ros__parameters:
     # --- 장치 기본 설정 ---
-    initial_reset: false      # 시작 시 장치 초기화 (연결 안정성)
+    initial_reset: true      # 시작 시 장치 초기화 (연결 안정성)
                               # 이미 에러가 난 상태에서 리셋하면 연결이 더 꼬일 수 있음    
     device_type: 'd435i'              # 장치 모델 지정
 
     # --- 해상도 및 프레임 속도 (USB 3.0 권장 설정) ---
     depth_module:
-      depth_profile: 640x480x30       # Depth 해상도 및 FPS
+      depth_profile: 424x240x30       # Depth 해상도 및 FPS
       enable_auto_exposure: true      # 자동 노출 활성화
 
     rgb_camera:
-      color_profile: 640x480x30       # RGB 해상도 및 FPS
+      color_profile: 424x240x30       # RGB 해상도 및 FPS
       enable_auto_exposure: true      # 자동 노출 활성화
 
     # --- 핵심 기능 활성화 ---
@@ -31,6 +31,7 @@
     enable_gyro: true                 # 자이로 활성화
     enable_accel: true                # 가속도계 활성화
     unite_imu_method: 2               # 0:None, 1:Copy, 2:Linear Interpolation (추천)
+    enable_sync: true                # IMU와 카메라 데이터 동기화 (Madgwick 필터에 중요)
     # gyro_fps: 200                     # IMU 샘플링 속도 (Madgwick 필터에 적합)
     # accel_fps: 200
     # qos_imu: 'SENSOR_DATA'
@@ -38,7 +39,7 @@
     clip_distance: 4.0                # 4미터 이상의 데이터는 절단 (노이즈 방지)
     allow_no_texture_points: false    # 텍스처 없는 포인트 제외 여부
 
-    publish_tf: True
+    publish_tf: true           #' use_nominal_extrinsics:=false'
     tf_publish_rate: 0.0       # TF 발행 빈도 (0일 경우 수동 호출 시에만 발행될 수 있음)
 
 
@@ -50,11 +51,15 @@ imu_filter:
     publish_tf: false        # EKF(Robot Localization)를 별도로 쓴다면 반드시 false
 
     # --- 알고리즘 튜닝 (D435i 특화) ---
-    gain: 0.05              # 추천: 0.01 ~ 0.1 사이.
+    gain: 0.01              # 추천: 0.01 ~ 0.1 사이.
                             # 낮을수록 자이로(회전) 의존도가 높아져 부드럽지만,
                             # 너무 낮으면 초기 자세를 잡는 데 오래 걸림.
 
-    zeta: 0.001              # 자이로 바이어스 드리프트 보정. 0.0에서 약간만 높임.
+    # 2. Zeta 값 조정
+    # 자이로 드리프트를 추정하는 파라미터입니다. 
+    # 드리프트가 심하다면 0.001에서 0.01 정도로 약간 높여보세요.
+    # 자이로 바이어스 드리프트 보정. 0.0에서 약간만 높임.
+    zeta: 0.01              
 
     # --- 데이터 품질 설정 ---
     constant_dt: 0.0         # 0.0으로 두어 실제 패킷 타임스탬프 간격 사용

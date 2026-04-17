@@ -42,7 +42,6 @@ def generate_launch_description():
         output='screen'
     )
 
-
     params_file = os.path.join(pkg_share, 'config', 'realsense_params2.yaml')
     # 3. realsense2_camera 노드
     # 실제 기기 보정값을 읽어와 camera_link 하위의 렌즈 및 IMU TF를 완성하고 데이터를 쏩니다.
@@ -55,6 +54,9 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', 'error'],
         env=dict(os.environ, LRS_LOG_LEVEL='error'),
         output='screen',
+        # 🚨 여기에 추가해야 합니다!
+        respawn=True,           # 노드가 비정상 종료 시 자동으로 다시 시작
+        respawn_delay=2.0,      # 다시 시작하기 전 대기 시간 (초)
     )
 
     # 4. imu_filter_madgwick 노드
@@ -78,7 +80,7 @@ def generate_launch_description():
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
-        name='rviz2',
+        # name='rviz2',
         # INFO 메시지 차단
         arguments=['-d', rviz_config_path,'--ros-args', '--log-level', 'warn'],
         output='screen'
@@ -87,7 +89,11 @@ def generate_launch_description():
     # 업로드하신 IMU TF 브로드캐스터 노드
     imu_tf_node = Node(
         package=pkg_name,
-        executable='imu_tf_broadcaster', # setup.py에 등록된 이름
+        # executable='imu_tf_broadcaster', # setup.py에 등록된 이름
+        # executable='imu_tf_watchdog', # setup.py에 등록된 이름
+        executable='imu_tf_service', # setup.py에 등록된 이름
+
+        
         name='imu_tf_broadcaster',
         parameters=[params_file],
         output='screen'

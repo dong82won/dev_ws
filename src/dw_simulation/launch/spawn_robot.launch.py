@@ -25,11 +25,14 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
 
+    # 3. XACRO 명령 실행 (공백 문제 해결을 위해 'xacro ' 사용)
+    xacro_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf.xacro')
+    robot_desc = ParameterValue(Command(['xacro ', xacro_file_path]), value_type=str)
 
-    # 4. URDF 파일 직접 읽기
-    urdf_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf')
-    with open(urdf_file_path, 'r') as infp:
-        robot_desc = infp.read()
+    # # 4. URDF 파일 직접 읽기
+    # urdf_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf')
+    # with open(urdf_file_path, 'r') as infp:
+    #     robot_desc = infp.read()
 
     # 4. 노드 설정
     robot_state_publisher_node = Node(
@@ -65,9 +68,4 @@ def generate_launch_description():
     ])
 
 
-
-
-    # # 3. XACRO 명령 실행 (공백 문제 해결을 위해 'xacro ' 사용)
-    # xacro_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf.xacro')
-    # robot_desc = ParameterValue(Command(['xacro ', xacro_file_path]), value_type=str)
 

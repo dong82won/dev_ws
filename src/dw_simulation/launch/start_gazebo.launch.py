@@ -40,7 +40,7 @@ def generate_launch_description():
     # 4. 가제보 실행 설정
     world_arg = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_world.world'),
+        default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_dqn_stage1.world'),
         description='Full path to world file'
     )
 

@@ -36,6 +36,7 @@ class ImuTFBroadcaster(Node):
         ]
 
     def imu_callback(self, msg):
+        self.get_logger().info('IMU 데이터 수신됨! TF 발행 중...') # 이 로그가 터미널에 찍히는지 확인
         t = TransformStamped()
         
         # 수정 전: t.header.stamp = self.get_clock().now().to_msg()
