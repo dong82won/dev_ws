@@ -23,19 +23,19 @@ class CustomJoyTeleop(Node):
         self.declare_parameter('angular_step',0.2)             # X, B 버튼 한 번 누를 때 변하는 각속도 양
 
         # 필터 계수 (0.0 ~ 1.0). 값이 작을수록 가감속이 부드럽게(천천히) 일어남
-        self.declare_parameter('alpha_linear',0.3)
-        self.declare_parameter('alpha_angular',0.3)
+        self.declare_parameter('alpha_linear',0.7)
+        self.declare_parameter('alpha_angular',0.7)
         # --- 조이스틱 데드존(Deadzone) 설정 ---
         # 5% 미만의 입력값은 노이즈(물리적 찌꺼기)로 간주하고 0.0으로 무시
         self.declare_parameter('deadzone',0.05)
 
-        self.max_linear_vel = self.get_parameter('initial_max_linear_vel').value
-        self.max_angular_vel = self.get_parameter('initial_max_angular_vel').value
-        self.linear_step = self.get_parameter('linear_step').value
-        self.angular_step = self.get_parameter('angular_step').value
-        self.alpha_linear = self.get_parameter('alpha_linear').value
-        self.alpha_angular = self.get_parameter('alpha_angular').value
-        self.deadzone = self.get_parameter('deadzone').value
+        self.max_linear_vel = self.get_parameter('initial_max_linear_vel').get_parameter_value().double_value
+        self.max_angular_vel = self.get_parameter('initial_max_angular_vel').get_parameter_value().double_value
+        self.linear_step = self.get_parameter('linear_step').get_parameter_value().double_value
+        self.angular_step = self.get_parameter('angular_step').get_parameter_value().double_value
+        self.alpha_linear = self.get_parameter('alpha_linear').get_parameter_value().double_value
+        self.alpha_angular = self.get_parameter('alpha_angular').get_parameter_value().double_value
+        self.deadzone = self.get_parameter('deadzone').get_parameter_value().double_value
 
         # 버튼 중복 눌림 방지용 이전 상태 저장 리스트
         self.last_buttons = [0] * 15
@@ -52,8 +52,9 @@ class CustomJoyTeleop(Node):
         self.timeout_sec = 0.5                      # 0.5초 이상 신호가 없으면 끊긴 것으로 간주
         self.is_timeout = False                     # 현재 타임아웃 상태인지 확인하는 플래그
 
-        # 0.1초(10Hz)마다 통신 상태를 확인하는 타이머 생성
-        self.timer = self.create_timer(0.05, self.control_loop_callback)
+        # 0.05초 (20Hz)마다 통신 상태를 확인하는 타이머 생성
+        # 수정 후: 50Hz (0.02초)로 변경하여 더 부드러운 명령 전달
+        self.timer = self.create_timer(0.02, self.control_loop_callback)
 
         self.get_logger().info('Custom F710 Teleop Node Started.')
         self.get_logger().info('Teleop Node Started with Low-Pass Filter.')
@@ -108,7 +109,7 @@ class CustomJoyTeleop(Node):
             self.get_logger().warn('E-STOP ACTIVATED! Hard Braking!', throttle_duration_sec=1.0)
         elif msg.buttons[4] == 1:
             # 헬퍼 함수를 통해 데드존 적용 및 부드러운 스케일링(Rescaling)이 완료된 축 값 가져오기
-            clean_linear = self.apply_deadzone_and_rescale(msg.axes[5])
+            clean_linear = self.apply_deadzone_and_rescale(msg.axes[1])
             clean_angular = self.apply_deadzone_and_rescale(msg.axes[2])
 
             # 재조정된 값으로 목표 속도 업데이트
@@ -118,6 +119,8 @@ class CustomJoyTeleop(Node):
             # LB 버튼에서 손을 떼면 목표 속도를 0으로 설정하여 필터를 통해 부드럽게 감속
             self.target_linear_vel = 0.0
             self.target_angular_vel = 0.0
+            self.current_linear_vel = 0.0   # 추가: 즉시 정지
+            self.current_angular_vel = 0.0  # 추가: 즉시 정지
 
     def apply_deadzone_and_rescale(self, raw_value):
         """
@@ -144,15 +147,33 @@ class CustomJoyTeleop(Node):
             self.target_linear_vel = 0.0
             self.target_angular_vel = 0.0
 
-        # 2. Low-pass Filter 적용 (수식: 현재 = 현재 + (목표 - 현재) * alpha)
-        self.current_linear_vel += (self.target_linear_vel - self.current_linear_vel) * self.alpha_linear
-        self.current_angular_vel += (self.target_angular_vel - self.current_angular_vel) * self.alpha_angular
 
-        # 3. 미세한 속도 찌꺼기 제거 (목표가 0일 때 무한히 0에 수렴만 하는 것을 방지)
-        if abs(self.current_linear_vel) < 0.001:
-            self.current_linear_vel = 0.0
-        if abs(self.current_angular_vel) < 0.001:
-            self.current_angular_vel = 0.0
+        # # 2. Low-pass Filter 적용 (수식: 현재 = 현재 + (목표 - 현재) * alpha)
+        # self.current_linear_vel += (self.target_linear_vel - self.current_linear_vel) * self.alpha_linear
+        # self.current_angular_vel += (self.target_angular_vel - self.current_angular_vel) * self.alpha_angular
+
+        # # 3. 미세한 속도 찌꺼기 제거 (목표가 0일 때 무한히 0에 수렴만 하는 것을 방지)
+        # if abs(self.current_linear_vel) < 0.001:
+        #     self.current_linear_vel = 0.0
+        # if abs(self.current_angular_vel) < 0.001:
+        #     self.current_angular_vel = 0.0
+
+        # 2. Low-pass Filter 적용
+        # 목표값과 현재값의 차이가 아주 작으면 필터를 타지 않고 바로 목표값으로 고정 (진동 방지)
+        diff_linear = self.target_linear_vel - self.current_linear_vel
+        diff_angular = self.target_angular_vel - self.current_angular_vel
+
+        if abs(diff_linear) < 0.005:
+            self.current_linear_vel = self.target_linear_vel
+        else:
+            self.current_linear_vel += diff_linear * self.alpha_linear
+
+        if abs(diff_angular) < 0.005:
+            self.current_angular_vel = self.target_angular_vel
+        else:
+            self.current_angular_vel += diff_angular * self.alpha_angular
+
+
 
         # 4. Twist 메시지 발행
         twist = Twist()

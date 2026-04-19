@@ -6,11 +6,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
-    # 1. 패키지 경로 설정
-    pkg_robot_description = get_package_prefix('boxbot_description')
 
-    pkg_simulation = get_package_share_directory('dw_simulation')
-    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
     # 2. Realsense 패키지 경로 탐색 (가제보 렌더링용)
     try:
@@ -21,6 +17,12 @@ def generate_launch_description():
         realsense_model_path = ''
 
     # 3. 모델 경로 통합
+    # 1. 패키지 경로 설정
+    pkg_robot_description = get_package_prefix('turtlebot3_description')
+
+    pkg_simulation = get_package_share_directory('dw_simulation')
+    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
+
     gazebo_models_dir = os.path.join(pkg_simulation, 'models')
     model_path_list = [
         os.path.join(pkg_robot_description, 'share'),
@@ -40,7 +42,7 @@ def generate_launch_description():
     # 4. 가제보 실행 설정
     world_arg = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_dqn_stage1.world'),
+        default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_house.world'),
         description='Full path to world file'
     )
 

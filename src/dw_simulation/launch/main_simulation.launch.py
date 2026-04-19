@@ -17,8 +17,8 @@ def generate_launch_description():
     rviz_config_path = os.path.join(pkg_simulation, 'rviz', 'my_rviz.rviz')
 
     # 1. 파라미터 선언 (최상위에서 모두 제어 가능하도록 구성)
-    x_pose_arg = DeclareLaunchArgument('x_pose', default_value='0.5', description='X position of the robot')
-    y_pose_arg = DeclareLaunchArgument('y_pose', default_value='0.5', description='Y position of the robot')
+    x_pose_arg = DeclareLaunchArgument('x_pose', default_value='0.1', description='X position of the robot')
+    y_pose_arg = DeclareLaunchArgument('y_pose', default_value='0.1', description='Y position of the robot')
     z_pose_arg = DeclareLaunchArgument('z_pose', default_value='0.2', description='Z position of the robot')
     use_rviz_arg = DeclareLaunchArgument('use_rviz', default_value='true', description='Whether to start RViz')
     use_sim_time_arg = DeclareLaunchArgument('use_sim_time', default_value='true', description='Whether to use simulation time')

@@ -9,9 +9,6 @@ from launch_ros.descriptions import ParameterValue
 
 def generate_launch_description():
 
-    pkg_description = get_package_share_directory('boxbot_description')
-
-
     # 1. 인자 선언
     x_pose_arg = DeclareLaunchArgument('x_pose', default_value='0.0')
     y_pose_arg = DeclareLaunchArgument('y_pose', default_value='0.0')
@@ -25,12 +22,14 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
 
+    pkg_description = get_package_share_directory('turtlebot3_description')
+
     # 3. XACRO 명령 실행 (공백 문제 해결을 위해 'xacro ' 사용)
-    xacro_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf.xacro')
+    xacro_file_path = os.path.join(pkg_description, 'urdf', 'tb3_burger_main.urdf.xacro')
     robot_desc = ParameterValue(Command(['xacro ', xacro_file_path]), value_type=str)
 
     # # 4. URDF 파일 직접 읽기
-    # urdf_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf')
+    # urdf_file_path = os.path.join(pkg_description, 'urdf', 'tb3_burger_gazebo_new.urdf')
     # with open(urdf_file_path, 'r') as infp:
     #     robot_desc = infp.read()
 
