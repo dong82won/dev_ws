@@ -48,7 +48,7 @@ def generate_launch_description():
     # 3. 월드 실행
     world_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_simulation, 'launch', 'start2_world.launch.py')
+            os.path.join(pkg_simulation, 'launch', 'start_world.launch.py')
         )
     )
 

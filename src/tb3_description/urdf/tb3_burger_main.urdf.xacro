@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<robot name="turtlebot3_burger" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- 
+  vlp16
+  lds -->
+  <xacro:arg name="lidar_model" default="vlp16"/> <xacro:property name="lidar_selection" value="$(arg lidar_model)" />
+
+  <xacro:property name="wheel_width"  value="0.018" />
+  <xacro:property name="wheel_radius" value="0.033" />
+
+  <xacro:arg name="gpu" default="true"/>
+  <xacro:property name="gpu" value="$(arg gpu)" />
+  <xacro:arg name="organize_cloud" default="false"/>
+  <xacro:property name="organize_cloud" value="$(arg organize_cloud)" />
+
+
+  <!-- <xacro:include filename="$(find tb3_description)/urdf/common_properties.xacro"/> -->
+  <xacro:include filename="$(find tb3_description)/urdf/xkcd_colors.urdf.xacro"/>
+  <xacro:include filename="$(find tb3_description)/urdf/tb3_burger_gazebo.xacro"/>
+
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro"/>
+  <xacro:include filename="$(find tb3_description)/urdf/VLP16.urdf.xacro"/>
+
+  <link name="base_footprint"/>
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0.010" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="-0.032 0 0.0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://tb3_description/meshes/bases/burger_base.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="darkgrey"/>
+
+    </visual>
+    <collision>
+      <origin xyz="-0.032 0 0.070" rpy="0 0 0"/>
+      <geometry><box size="0.140 0.140 0.143"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.82573504"/>
+      <origin xyz="-0.032 0 0.070" rpy="0 0 0"/>
+      <inertia ixx="7.2397393e-03" ixy="0.0" ixz="0.0"
+              iyy="7.2397393e-03" iyz="0.0" izz="6.53050163e-03" />
+    </inertial>
+  </link>
+
+  <xacro:macro name="wheel" params="prefix y_offset rpy_v mesh_file">
+    <link name="wheel_${prefix}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="${rpy_v} 0 0"/>
+        <geometry><mesh filename="package://tb3_description/meshes/wheels/${mesh_file}" scale="0.001 0.001 0.001"/></geometry>
+        <material name="greyish"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry><cylinder length="${wheel_width}" radius="${wheel_radius}"/></geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" /><mass value="0.02849894"/>
+        <inertia ixx="1.8158194e-03" ixy="-9.3392e-12" ixz="1.04909e-11" iyy="3.2922126e-03" iyz="5.75694e-11" izz="1.8158194e-03" />
+      </inertial>
+    </link>
+    <joint name="wheel_${prefix}_joint" type="continuous">
+      <parent link="base_link"/><child link="wheel_${prefix}_link"/>
+      <origin xyz="0.0 ${y_offset} 0.023" rpy="-1.57 0 0"/><axis xyz="0 0 1"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel prefix="left"  y_offset="0.08"  rpy_v="1.57" mesh_file="left_tire.stl" />
+  <xacro:wheel prefix="right" y_offset="-0.08" rpy_v="1.57" mesh_file="right_tire.stl" />
+
+  <link name="caster_back_link">
+    <collision>
+      <origin xyz="0 0.001 0" rpy="0 0 0"/>
+      <geometry><box size="0.030 0.009 0.010"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.005"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/></inertial>
+  </link>
+  <joint name="caster_back_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_back_link"/>
+    <origin xyz="-0.081 0 -0.004" rpy="-1.57 0 0"/>
+  </joint>
+  <link name="imu_link"/>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="-0.032 0 0.068" rpy="0 0 0"/>
+  </joint>
+
+
+  <xacro:if value="${lidar_selection == 'lds'}">
+    <link name="laser_scan_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://tb3_description/meshes/sensors/lds.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoalgrey"/>
+
+    </visual>
+    <collision>
+      <origin xyz="0.015 0 -0.0065" rpy="0 0 0"/><geometry>
+        <cylinder length="0.0315" radius="0.055"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.114"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="scan_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_scan_link"/>
+    <origin xyz="-0.032 0 0.172" rpy="0 0 0"/>
+  </joint>
+  </xacro:if>
+
+  <xacro:if value="${lidar_selection == 'vlp16'}">
+    <xacro:VLP_16 parent="base_link" name="velodyne" topic="/velodyne_points" organize_cloud="${organize_cloud}" hz="10" samples="440" gpu="${gpu}"> 
+    <origin xyz="-0.032 0 0.142" rpy="0 0 0" />
+    </xacro:VLP_16>
+  </xacro:if>
+
+  <xacro:sensor_d435i parent="base_link" name="camera" use_nominal_extrinsics="true">
+      <origin xyz="0.045 0 0.11" rpy="0 0 0"/>
+  </xacro:sensor_d435i>
+
+
+
+</robot>

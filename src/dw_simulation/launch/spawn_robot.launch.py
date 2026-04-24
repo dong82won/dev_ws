@@ -1,7 +1,7 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration, Command
+from launch.substitutions import LaunchConfiguration, Command, FindExecutable
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument
 from launch_ros.descriptions import ParameterValue
@@ -22,11 +22,12 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
 
-    pkg_description = get_package_share_directory('turtlebot3_description')
+    #pkg_description = get_package_share_directory('turtlebot3_description')
+    pkg_description = get_package_share_directory('tb3_description')
 
-    # 3. XACRO 명령 실행 (공백 문제 해결을 위해 'xacro ' 사용)
+    # 3. XACRO 명령 실행 (ROS 2 표준 방식)
     xacro_file_path = os.path.join(pkg_description, 'urdf', 'tb3_burger_main.urdf.xacro')
-    robot_desc = ParameterValue(Command(['xacro ', xacro_file_path]), value_type=str)
+    robot_desc = ParameterValue( Command([FindExecutable(name='xacro'), ' ', xacro_file_path]), value_type=str)
 
     # # 4. URDF 파일 직접 읽기
     # urdf_file_path = os.path.join(pkg_description, 'urdf', 'tb3_burger_gazebo_new.urdf')
@@ -38,8 +39,8 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{
-            'use_sim_time': use_sim_time,
-            'robot_description': robot_desc,
+                    'use_sim_time': use_sim_time,
+                    'robot_description': robot_desc,
                     }],
         output="screen"
     )
@@ -65,6 +66,5 @@ def generate_launch_description():
         robot_state_publisher_node,
         spawn_entity_node
     ])
-
 
 

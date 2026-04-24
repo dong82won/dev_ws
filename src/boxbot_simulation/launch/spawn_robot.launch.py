@@ -1,9 +1,10 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument
+from launch_ros.descriptions import ParameterValue
 
 def generate_launch_description():
     # 1. 패키지 경로 및 설정
@@ -22,9 +23,13 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     # 3. URDF 파일 읽기
-    urdf_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf')
-    with open(urdf_file_path, 'r') as infp:
-        robot_desc = infp.read()
+    # urdf_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf')
+    # with open(urdf_file_path, 'r') as infp:
+    #     robot_desc = infp.read()
+
+    # 3. XACRO 명령 실행 (공백 문제 해결을 위해 'xacro ' 사용)
+    xacro_file_path = os.path.join(pkg_description, 'urdf', 'box_bot3.urdf.xacro')
+    robot_desc = ParameterValue(Command(['xacro ', xacro_file_path]), value_type=str)
 
     # 4. Robot State Publisher 노드 (TF 트리 구성)
     # publish_frequency를 50Hz로 높여 고정 좌표(Fixed Joint)의 시간 멈춤을 방지합니다.

@@ -11,7 +11,7 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
     pkg_simulation = get_package_share_directory('boxbot_simulation')
-    # pkg_small_house = get_package_share_directory('aws_robomaker_small_house_world')
+    pkg_small_house = get_package_share_directory('aws_robomaker_bookstore_world')
     # pkg_gazebo_collection = get_package_share_directory('gazebo_models_worlds_collection')
 
     try:
@@ -31,12 +31,12 @@ def generate_launch_description():
 
     # 모델 경로들
     gazebo_models_dir = os.path.join(pkg_simulation, 'models')
-    # house_models_dir = os.path.join(pkg_small_house, 'models')
+    house_models_dir = os.path.join(pkg_small_house, 'models')
     # gazebo_collection_dir = os.path.join(pkg_small_house, 'models')
 
     # 환경 변수 추가 (기존 경로 유지 + 새 경로 추가)
     if 'GAZEBO_MODEL_PATH' in os.environ:
-        os.environ['GAZEBO_MODEL_PATH'] += f":{install_dir}/share:{gazebo_models_dir}:{pkg_realsense_dir}"
+        os.environ['GAZEBO_MODEL_PATH'] += f":{install_dir}/share:{gazebo_models_dir}:{pkg_realsense_dir}:{house_models_dir}"
     else:
         os.environ['GAZEBO_MODEL_PATH'] = f"{install_dir}/share:{gazebo_models_dir}:{pkg_realsense_dir}"
 
@@ -58,6 +58,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'world',
             default_value=os.path.join(pkg_simulation, 'worlds', 'box_bot_empty2.world'),
+            #default_value=os.path.join(pkg_small_house, 'worlds', 'bookstore.world'),
             description='Full path to the world model file to load'),
             gazebo
     ])
