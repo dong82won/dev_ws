@@ -1,0 +1,32 @@
+@startuml DockingActivity
+start
+
+:Initialize System;
+:Load Map & Localization;
+
+:Start Navigation (Nav2);
+:Move to Pre-docking Point;
+
+if (Near Docking Station?) then (Yes)
+
+  :Activate Camera;
+  :Detect QR;
+
+  :Estimate (x, y, yaw);
+  :Update TF (marker_frame);
+
+  :Switch Control to Docking;
+
+  :Precision Control;
+  :Publish /cmd_vel;
+
+  :Docking Complete;
+
+else (No)
+
+  :Continue Navigation;
+
+endif
+
+stop
+@enduml

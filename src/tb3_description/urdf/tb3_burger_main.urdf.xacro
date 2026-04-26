@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="turtlebot3_burger" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <!-- 
+  <!--
   vlp16
   lds -->
   <xacro:arg name="lidar_model" default="vlp16"/> <xacro:property name="lidar_selection" value="$(arg lidar_model)" />

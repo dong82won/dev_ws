@@ -31,6 +31,7 @@ setup(
         # Launch 파일 설치
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
+        (os.path.join('share', package_name, 'config'), glob('config/*.xml')),
     ]
     # worlds 폴더 및 하위 actor_worlds 등 계층 유지 설치
     + get_recursive_data_files('worlds', os.path.join('share', package_name))

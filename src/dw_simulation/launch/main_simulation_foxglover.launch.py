@@ -12,14 +12,17 @@ from launch.conditions import IfCondition
 def generate_launch_description():
 
     pkg_simulation = get_package_share_directory('dw_simulation')
-    rviz_config_path = os.path.join(pkg_simulation, 'rviz', 'my_rviz.rviz')
+    # RViz 설정 경로는 더 이상 필요 없으므로 삭제하거나 유지해도 무방합니다.
 
-    # 1. 파라미터 선언 (최상위에서 모두 제어 가능하도록 구성)
+    # 1. 파라미터 선언
     x_pose_arg = DeclareLaunchArgument('x_pose', default_value='-1.6', description='X position of the robot')
     y_pose_arg = DeclareLaunchArgument('y_pose', default_value='4.0', description='Y position of the robot')
     z_pose_arg = DeclareLaunchArgument('z_pose', default_value='0.2', description='Z position of the robot')
 
-    use_rviz_arg = DeclareLaunchArgument('use_rviz', default_value='true', description='Whether to start RViz')
+    # RViz 대신 Foxglove 사용 여부와 포트 번호 인자 추가
+    use_foxglove_arg = DeclareLaunchArgument('use_foxglove', default_value='true', description='Whether to start Foxglove Bridge')
+    foxglove_port_arg = DeclareLaunchArgument('foxglove_port', default_value='8765', description='Port for Foxglove Bridge')
+
     use_sim_time_arg = DeclareLaunchArgument('use_sim_time', default_value='true', description='Whether to use simulation time')
 
     # 2. 파라미터 값 참조
@@ -27,10 +30,11 @@ def generate_launch_description():
     y_pose = LaunchConfiguration('y_pose')
     z_pose = LaunchConfiguration('z_pose')
 
-    use_rviz = LaunchConfiguration('use_rviz')
+    use_foxglove = LaunchConfiguration('use_foxglove')
+    foxglove_port = LaunchConfiguration('foxglove_port')
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # 3. 월드 실행 (start_world2.launch.py 호출)
+    # 3. 월드 실행 (start_new_gazebo.launch.py 호출)
     world_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_simulation, 'launch', 'start_new_gazebo.launch.py')
@@ -51,24 +55,27 @@ def generate_launch_description():
         }.items()
     )
 
-    # 5. RViz 실행
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        arguments=['-d', rviz_config_path],
-        parameters=[{'use_sim_time': use_sim_time}],
-        condition=IfCondition(use_rviz),
-        output='screen',
-        on_exit=Shutdown()  # RViz가 종료되면 시뮬레이션도 종료
+    # 5. Foxglove Bridge 실행 (rviz_node 대체)
+    foxglove_node = Node(
+        package='foxglove_bridge',
+        executable='foxglove_bridge',
+        parameters=[{
+            'port': foxglove_port,
+            'use_sim_time': use_sim_time
+        }],
+        condition=IfCondition(use_foxglove),
+        output='screen'
+        # on_exit=Shutdown() # 브리지를 꺼도 시뮬레이션을 유지하고 싶다면 이 줄을 주석 처리하세요.
     )
 
     return LaunchDescription([
         x_pose_arg,
         y_pose_arg,
         z_pose_arg,
-        use_rviz_arg,
+        use_foxglove_arg,
+        foxglove_port_arg,
         use_sim_time_arg,
         world_launch,
         spawn_launch,
-        rviz_node
+        foxglove_node
     ])

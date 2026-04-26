@@ -1,0 +1,35 @@
+@startuml Component Diagram
+left to right direction
+skinparam componentStyle rectangle
+
+package "SLAM & Navigation" {
+  [map_server]
+  [amcl]
+  [Nav2 Stack]
+}
+
+package "Perception" {
+  [camera_driver]
+  [QR Detector]
+}
+
+package "Docking" {
+  [Docking Controller]
+}
+
+package "System" {
+  [TF Tree]
+  [/cmd_vel]
+}
+
+[map_server] --> [Nav2 Stack]
+[amcl] --> [Nav2 Stack]
+[Nav2 Stack] --> [/cmd_vel]
+
+[camera_driver] --> [QR Detector]
+[QR Detector] --> [TF Tree]
+
+[TF Tree] --> [Docking Controller]
+[Docking Controller] --> [/cmd_vel]
+
+@enduml
