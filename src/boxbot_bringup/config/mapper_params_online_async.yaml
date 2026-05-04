@@ -47,7 +47,7 @@ slam_toolbox:
     min_laser_range: 0.12              # 스캔 최소 유효 거리 (m) # 스캔 최소 유효 거리 (m)(가제보 라이다 스펙에 맞춤)
     max_laser_range: 8.0               # 스캔 최대 유효 거리 (m) # 라이다 센서의 최대 측정 거리
 
-    
+
     # 스캔 처리 최소 시간 간격 (초) # 스캔 데이터를 처리하는 최소 시간 간격
     # minimum_time_interval을 조금 더 늘려 확실하게 여유를 줍니다.
     minimum_time_interval: 0.2         # 0.1에서 0.2로 증가

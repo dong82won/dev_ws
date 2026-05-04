@@ -3,11 +3,13 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.substitutions import Command
 from launch_ros.actions import Node
+# 아래 import 추가
+from launch_ros.parameter_descriptions import ParameterValue
 
 # this is the function launch  system will look for
 def generate_launch_description():
 
-    package_description = 'tb3_description'    
+    package_description = 'tb3_description'
     urdf_file = 'tb3_burger_main.urdf.xacro'
 
     robot_desc_path = os.path.join(get_package_share_directory(package_description), 'urdf', urdf_file)
@@ -30,7 +32,10 @@ def generate_launch_description():
         # name='robot_state_publisher_node',
         emulate_tty=True,
         parameters=[{'use_sim_time': use_sim_time,
-                    'robot_description': Command(['xacro ', robot_desc_path])}],
+                    # 'robot_description': Command(['xacro ', robot_desc_path])}],
+                    # 아래 부분을 ParameterValue로 감싸서 수정
+                    'robot_description': ParameterValue(Command(['xacro ', robot_desc_path]), value_type=str)
+        }],
         output="screen"
     )
 

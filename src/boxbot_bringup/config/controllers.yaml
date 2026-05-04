@@ -1,0 +1,51 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50 # Hz 0.02s 주기로 컨트롤러 업데이트 (EKF와 일치하도록 50Hz로 설정)
+    # 사용할 제어기 목록 정의
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    diff_drive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+diff_drive_controller:
+  ros__parameters:
+    # 소스 파일의 조인트 이름과 일치해야 함
+    left_wheel_names: ["wheel_left_joint"]
+    right_wheel_names: ["wheel_right_joint"]
+
+    #소스 파일의 물리 수치 반영
+    wheel_separation: 0.160 # 휠 간격 (m) (URDF의 wheel_separation 값과 일치하도록 설정)
+    wheel_radius: 0.033 # 휠 반지름 (m) (URDF의 wheel_radius 값과 일치하도록 설정)
+
+    wheel_separation_multiplier: 1.0 # 휠 간격 보정 계수 (필요 시 조정)
+    left_wheel_radius_multiplier: 1.0 # 왼쪽 휠 반지름 보정 계수 (필요 시 조정)
+    right_wheel_radius_multiplier: 1.0 # 오른쪽 휠 반지름 보정 계수 (필요 시 조정)
+
+    # TF 및 오도메트리 설정
+    publish_rate: 50.0 # TF 및 오도메트리 발행 주기 (EKF와 일치하도록 50Hz로 설정)
+    odom_frame_id: odom # 오도메트리 프레임 ID (EKF의 odom_frame과 일치하도록 설정)
+    base_frame_id: base_footprint # 로봇의 중심 프레임 ID (EKF의 base_link_frame과 일치하도록 설정)
+    pose_covariance_diagonal: [0.001, 0.001, 0.01, 0.01, 0.01, 0.01] # 오도메트리 위치 불확실성 (x, y, z, roll, pitch, yaw)
+    twist_covariance_diagonal: [0.001, 0.001, 0.01, 0.01, 0.01, 0.01] # 오도메트리 속도 불확실성 (vx, vy, vz, vroll, vpitch, vyaw)
+
+    open_loop: false # false로 설정하여 EKF에서 계산된 오도메트리를 사용하도록 함 (true로 설정 시 명령된 속도로 오도메트리 계산)
+
+    # EKF 사용 시 컨트롤러의 enable_odom_tf를 false로 설정하는 것이 좋습니다.
+    # EKF 사용 시 odom -> base_footprint TF를 발행하도록 합니다.
+    enable_odom_tf: false # EKF가 odom -> base_footprint TF를 발행하도록 설정 (true로 설정 시 diff_drive_controller가 발행, false로 설정 시 EKF가 발행)
+
+    use_stamped_vel: false  # 일반 Twist 메시지(키보드 제어용)를 허용함
+
+    # 가속도 제한: 멈출 때 밀리는 현상을 해결하는 핵심 설정
+    linear:
+      x: # 선형 속도 제한 설정
+        has_velocity_limits: true # 선형 속도 제한 활성화
+        max_velocity: 0.22 # m/s (URDF의 max_velocity 값과 일치하도록 설정, 필요 시 조정)
+        has_acceleration_limits: true # 선형 가속도 제한 활성화
+        max_acceleration: 1.0 # 멈출 때 너무 밀리면 이 값을 0.5~0.8로 낮춤 (가제보에서는 1.0으로 시작해서 필요 시 조정)
+    angular:
+      z:
+        has_velocity_limits: true # 각속도 제한 활성화
+        max_velocity: 2.84 # rad/s # URDF의 max_velocity 값과 일치하도록 설정, 필요 시 조정
+        has_acceleration_limits: true # 각 가속도 제한 활성화
+        max_acceleration: 2.0 # 회전 정지 시 밀림 방지를 위해 조정 # 가제보에서는 2.0으로 시작해서 필요 시 조정

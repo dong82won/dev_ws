@@ -2,31 +2,47 @@
 ekf_filter_node:
   ros__parameters:
     use_sim_time: true
+
+    # EKF 업데이트 주기 및 안전 설정
     # 데이터가 오지 않아도 50Hz 주기를 강제로 유지하게 합니다.
-    predict_to_current_time: true
+
     frequency: 50.0 #(30.0 -> 50.0) # EKF 업데이트 주기 (Hz)
-    sensor_timeout: 0.02
+    sensor_timeout: 0.2
     two_d_mode: true  # 2D 평면 주행 시 true
     publish_tf: true
+    predict_to_current_time: true
 
-    # 프레임 설정
+    # 프레임 설정 (TF 트리와 일치)
     map_frame: map
     odom_frame: odom
     base_link_frame: base_footprint # 또는 base_link
-    world_frame: odom
+    world_frame: odom # odom → base_footprint TF 발행
 
     # Odometry 입력 설정 (가제보 토픽)
-    odom0: /odom
-    odom0_config: [true,  true,  false, # x, y, z
-                  false, false, true,  # roll, pitch, yaw
+    #odom0: /odom
+    odom0: /diff_drive_controller/odom
+    # [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
+    # 위치(x, y) 대신 속도(vx, vyaw)를 사용하여 IMU와의 충돌을 방지합니다.
+    odom0_config: [false, false, false, # x, y, z
+                  false, false, false, # roll, pitch, yaw
                   true,  true,  false, # vx, vy, vz
                   false, false, true,  # vroll, vpitch, vyaw
                   false, false, false] # ax, ay, az
+    odom0_relative: true
 
     # IMU 입력 설정 (가제보 토픽)
-    imu0: /imu/data
-    imu0_config: [false, false, false, # x, y, z
-                  false, false, true,  # roll, pitch, yaw
-                  false, false, false, # vx, vy, vz
-                  false, false, true,  # vroll, vpitch, vyaw
-                  true,  true,  false] # ax, ay, az
+    imu0: /imu
+    # [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
+    imu0_config: [false, false, false,
+                  false, false, true,  # Yaw (방향)만 사용하거나
+                  false, false, false,
+                  false, false, true,  # Angular Velocity (회전 속도) 사용
+                  true,  false, false] # Linear Acceleration (전진 가속도) 사용
+
+    # [핵심] 가제보 IMU와 호환되도록 QoS를 "sensor_data"로 설정합니다.
+    imu0_qos: sensor_data
+
+    # IMU 고급 설정
+    imu0_relative: true # 시작 시점의 방향을 0으로 초기화
+    imu0_remove_gravitational_acceleration: true # 중력 가속도 제거
+    imu0_queue_size: 10

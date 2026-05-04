@@ -88,7 +88,7 @@
     <!-- <material>Gazebo/FlatBlack</material> -->
   </gazebo>
 
-
+<!-- 
   <gazebo>
     <plugin name="tb3_diff_drive" filename="libgazebo_ros_diff_drive.so">
       <update_rate>50</update_rate>
@@ -121,8 +121,45 @@
       <joint_name>wheel_left_joint</joint_name>
       <joint_name>wheel_right_joint</joint_name>
     </plugin>
-  </gazebo>  
- 
+  </gazebo> -->
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <joint name="wheel_left_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="wheel_right_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <!-- <parameters>$(find boxbot_bringup)/config/controllers.yaml</parameters> -->
+      <parameters>$(find boxbot_bringup)/config/controllers_advenced.yaml</parameters>
+
+      <ros>
+        <use_sim_time>true</use_sim_time>
+        <remapping>/diff_drive_controller/cmd_vel_unstamped:=/cmd_vel</remapping>
+        <!-- <remapping>/diff_drive_controller/odom:=/odom</remapping> -->
+      </ros>
+
+    </plugin>
+  </gazebo>
 
 
   <xacro:property name="lidar_selection" value="$(arg lidar_model)" />
@@ -178,6 +215,7 @@
       </imu>
       <plugin name="tb3_imu" filename="libgazebo_ros_imu_sensor.so">
         <ros><remapping>~/out:=imu</remapping></ros>
+        <frame_name>imu_link</frame_name>
         <gaussianNoise>0.01</gaussianNoise>
       </plugin>
     </sensor>

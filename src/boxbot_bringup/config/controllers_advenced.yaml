@@ -1,0 +1,86 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50 # Hz 0.02s 주기로 컨트롤러 업데이트 (EKF와 일치하도록 50Hz로 설정)
+    use_sim_time: true # 추가
+    # 사용할 제어기 목록 정의
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    diff_drive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+diff_drive_controller:
+  ros__parameters:
+    use_sim_time: true # 반드시 추가
+    update_rate_multiplier: 1
+    # [고급] 다중 명령 발행 금지 (안전)
+    allow_multiple_cmd_vel_publishers: false
+
+    # [고급] 진단 기능 활성화
+    enable_diagnostics: true
+
+    # [고급] 하드웨어 인터페이스 데이터 누락 시 NaN 사용
+    use_nan_for_unused_values: true
+
+    # [기본 설정 확인]
+    use_stamped_vel: false
+
+    left_wheel_names: ["wheel_left_joint"]
+    right_wheel_names: ["wheel_right_joint"]
+
+    wheel_separation: 0.160
+    wheel_radius: 0.033
+
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+
+    # [추가] 안전 설정: 0.25초 동안 명령이 없으면 로봇 정지
+    cmd_vel_timeout: 0.25
+
+    # [추가] 오도메트리 정밀도: 적분 방식을 Runge-Kutta로 설정하여 회전 오차 감소
+    odom_numeric_integration_method: runge_kutta2
+
+    # [추가] 속도 평활화: 최근 10개의 샘플을 평균하여 속도 노이즈 억제
+    velocity_rolling_window_size: 10
+
+    # TF 및 오도메트리 설정
+    publish_rate: 50.0
+    odom_frame_id: odom
+    base_frame_id: base_footprint
+
+    # [추가] 진단 데이터 발행: 각 바퀴의 상태와 제한된 속도 정보를 토픽으로 확인 가능
+    publish_wheel_data: true
+    publish_limited_velocity: true
+
+    pose_covariance_diagonal: [0.001, 0.001, 0.01, 0.01, 0.01, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.01, 0.01, 0.01, 0.01]
+
+    open_loop: false # false로 설정하여 EKF에서 계산된 오도메트리를 사용하도록 함 (true로 설정 시 명령된 속도로 오도메트리 계산)
+    enable_odom_tf: false # EKF 사용을 위해 false로 변경 권장
+
+
+    # 주행 제한 및 부드러운 움직임 설정
+    linear:
+      x:
+        has_velocity_limits: true # 선형 속도 제한: 과속 방지
+        max_velocity: 0.22 # 선형 속도 제한: 과속 방지
+        has_acceleration_limits: true # [추가] 가속도 제한: 급격한 가속 방지
+        max_acceleration: 1.0 # [추가] 가속도 제한: 급격한 가속 방지
+        # [추가] 저크(Jerk) 제한: 가속도의 급격한 변화를 막아 덜컹거림 방지
+        has_jerk_limits: true
+        max_jerk: 5.0 # [추가] 저크(Jerk) 제한: 가속도의 급격한 변화를 막아 덜컹거림 방지
+    angular:
+      z:
+        has_velocity_limits: true # 회전 속도 제한: 제자리 회전 시 과도한 속도 방지
+        max_velocity: 2.84 # 회전 속도 제한: 제자리 회전 시 과도한 속도 방지 (0.5 * pi rad/s = 90 deg/s)
+        has_acceleration_limits: true # [추가] 가속도 제한: 급격한 회전 가속 방지
+        max_acceleration: 2.0 # [추가] 가속도 제한: 급격한 회전 가속 방지
+        # [추가] 회전 저크 제한: 제자리 회전 시작/종료 시 충격 완화
+        has_jerk_limits: true
+        max_jerk: 10.0 # [추가] 회전 저크 제한: 제자리 회전 시작/종료 시 충격 완화
+
+# 상태 방송기: 25Hz로 동작하게 설정 (50 / 2 = 25)
+# CPU 부하를 줄이기 위해 시각화 데이터는 더 천천히 발행합니다.
+joint_state_broadcaster:
+  ros__parameters:
+    update_rate_multiplier: 2

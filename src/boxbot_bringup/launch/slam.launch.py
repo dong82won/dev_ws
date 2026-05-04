@@ -2,11 +2,14 @@ import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     # 1. 패키지 경로 및 설정 파일 경로 지정
     pkg_bringup = get_package_share_directory('boxbot_bringup')
     slam_config_path = os.path.join(pkg_bringup, 'config', 'mapper_params_online_async.yaml')
+
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     # 2. SLAM Toolbox 노드 정의
     slam_node = Node(
@@ -15,7 +18,7 @@ def generate_launch_description():
         name='slam_toolbox',
         output='screen',
         parameters=[
-            {'use_sim_time': True}, # 가제보 시뮬레이션을 위해 필수
+            {'use_sim_time': use_sim_time}, # 가제보 시뮬레이션을 위해 필수
             slam_config_path,
         ]
     )

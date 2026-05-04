@@ -1,0 +1,14 @@
+# boxbot_bringup/config/diagnostics.yaml
+/**:
+  ros__parameters:
+    analyzers:
+      robot:
+        type: diagnostic_aggregator/AnalyzerGroup
+        path: Robot
+        analyzers:
+          localization:
+            type: diagnostic_aggregator/GenericAnalyzer
+            path: Localization
+            # 단일 문자열이 아닌 ['값'] 형태의 배열로 전달해야 합니다.
+            find_and_remove_prefix: ['ekf_filter_node'] 
+            num_items: 1

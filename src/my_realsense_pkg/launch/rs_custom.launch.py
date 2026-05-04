@@ -27,11 +27,13 @@ def generate_launch_description():
         #' use_nominal_extrinsics:=true' #시뮬레이션용
     ])
 
+
     # B. Robot State Publisher (네임스페이스 제거 권장)
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
+        #namespace='camera',  # 카메라 노드와 동일하게 설정
         parameters=[{
             'robot_description': robot_description_content,
             'publish_frequency': 30.0,
@@ -39,7 +41,12 @@ def generate_launch_description():
             'frame_prefix': "",           # 멀티 로봇이 아니라면 비워둠
             'ignore_timestamp': False,    # 데이터 동기화를 위해 false(기본값) 권장
         }],
-        output='screen'
+        output='screen',
+        # ⭐ 전역 토픽을 바라보도록 설정
+        remappings=[
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static')
+        ],
     )
 
     params_file = os.path.join(pkg_share, 'config', 'realsense_params2.yaml')
@@ -57,6 +64,11 @@ def generate_launch_description():
         # 🚨 여기에 추가해야 합니다!
         respawn=True,           # 노드가 비정상 종료 시 자동으로 다시 시작
         respawn_delay=2.0,      # 다시 시작하기 전 대기 시간 (초)
+        # ⭐ TF 리매핑 추가: 네임스페이스 내부의 TF를 전역으로 뺍니다.
+        remappings=[
+            ('/tf', '/tf'),
+            ('/tf_static', '/tf_static')
+        ]
     )
 
     # 4. imu_filter_madgwick 노드
@@ -75,7 +87,7 @@ def generate_launch_description():
         ]
     )
 
-    rviz_config_path = os.path.join(pkg_share, 'rviz', 'rviz2.rviz')
+    rviz_config_path = os.path.join(pkg_share, 'rviz', 'realsense_view.rviz')
     # D. RViz2 실행
     rviz_node = Node(
         package='rviz2',
@@ -93,7 +105,6 @@ def generate_launch_description():
         # executable='imu_tf_watchdog', # setup.py에 등록된 이름
         executable='imu_tf_service', # setup.py에 등록된 이름
 
-        
         name='imu_tf_broadcaster',
         parameters=[params_file],
         output='screen'
