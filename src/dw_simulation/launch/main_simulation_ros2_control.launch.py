@@ -11,14 +11,10 @@ from launch.conditions import IfCondition
 
 def generate_launch_description():
 
-    pkg_simulation = get_package_share_directory('dw_simulation')
-    rviz_config_path = os.path.join(pkg_simulation, 'rviz', 'my_rviz.rviz')
-
     # 1. 파라미터 선언 (최상위에서 모두 제어 가능하도록 구성)
     x_pose_arg = DeclareLaunchArgument('x_pose', default_value='-1.6', description='X position of the robot')
     y_pose_arg = DeclareLaunchArgument('y_pose', default_value='4.0', description='Y position of the robot')
     z_pose_arg = DeclareLaunchArgument('z_pose', default_value='0.2', description='Z position of the robot')
-
     use_rviz_arg = DeclareLaunchArgument('use_rviz', default_value='true', description='Whether to start RViz')
     use_sim_time_arg = DeclareLaunchArgument('use_sim_time', default_value='true', description='Whether to use simulation time')
 
@@ -26,9 +22,11 @@ def generate_launch_description():
     x_pose = LaunchConfiguration('x_pose')
     y_pose = LaunchConfiguration('y_pose')
     z_pose = LaunchConfiguration('z_pose')
-
     use_rviz = LaunchConfiguration('use_rviz')
     use_sim_time = LaunchConfiguration('use_sim_time')
+
+
+    pkg_simulation = get_package_share_directory('dw_simulation')
 
     # 3. 월드 실행 (start_world2.launch.py 호출)
     world_launch = IncludeLaunchDescription(
@@ -52,6 +50,7 @@ def generate_launch_description():
     )
 
     # 5. RViz 실행
+    rviz_config_path = os.path.join(pkg_simulation, 'rviz', 'my_rviz.rviz')
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',

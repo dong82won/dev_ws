@@ -63,8 +63,7 @@ def generate_launch_description():
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_state_broadcaster"],
-        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=["joint_state_broadcaster"]
     )
 
     # 차동 구동 제어기 (가속도 제한이 적용된 실제 드라이버)
@@ -72,7 +71,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["diff_drive_controller"],
-        parameters=[{'use_sim_time': use_sim_time}]
+        # parameters=[{'use_sim_time': use_sim_time}]
     )
 
     # # 7. 실행 순서 보장 (로봇 소환 후 제어기 실행)

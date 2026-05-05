@@ -7,27 +7,23 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
-    
-    # 1. 시뮬레이션 시간 설정 인자 선언
-    use_sim_time_arg = DeclareLaunchArgument(
-        'use_sim_time', default_value='true',
-        description='Use simulation time'
-    )
-    use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # 2. 가제보 파라미터 파일 경로 설정 (publish_rate: 100.0 설정 포함)
-    # 이 파일이 ~/dev_ws/src/boxbot_bringup/config/gazebo_params.yaml 에 있어야 합니다.
-    pkg_bringup = get_package_share_directory('boxbot_bringup')
-    gazebo_params_path = os.path.join(pkg_bringup, 'config', 'gazebo_params.yaml')
+    # 1. 시뮬레이션 시간 설정 인자 선언
+    use_sim_time_arg = DeclareLaunchArgument('use_sim_time',default_value='true',
+                                                            description='Use simulation time')
+    use_sim_time = LaunchConfiguration('use_sim_time')
 
     # 3. 패키지 및 모델 경로 설정 (사용자님 기존 로직 유지)
     realsense_share = get_package_share_directory('realsense2_description')
     realsense_model_path = os.path.abspath(os.path.join(realsense_share, '..'))
 
     pkg_simulation = get_package_share_directory('dw_simulation')
-    pkg_robot_description = get_package_prefix('tb3_description')
 
-    gazebo_models_dir = os.path.join(pkg_simulation, 'models') 
+    gazebo_models_dir = os.path.join(pkg_simulation, 'models')
+    # 2. 가제보 파라미터 파일 경로 설정 (publish_rate: 100.0 설정 포함)
+    gazebo_params_path = os.path.join(pkg_simulation, 'config', 'gazebo_params.yaml')
+
+    pkg_robot_description = get_package_prefix('tb3_description')
 
     # 4. GAZEBO_MODEL_PATH 구성을 위한 리스트 생성
     model_paths = [
@@ -55,7 +51,8 @@ def generate_launch_description():
     # 6. 월드 파일 인자 선언
     world_arg = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_house.world'),
+        # default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_house.world'),
+        default_value=os.path.join(pkg_simulation, 'worlds', 'test_worlds', 'test_room_v0.world'),
         description='Full path to the world file to load'
     )
     # 7. 가제보 서버(gzserver) 및 클라이언트(gzclient) 분리 실행
