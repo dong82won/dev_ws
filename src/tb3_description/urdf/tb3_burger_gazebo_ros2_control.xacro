@@ -13,8 +13,8 @@
     <visual>
       <material>
         <ambient>0.2117 0.2156 0.2156 1.0</ambient>
-        <diffuse>0.2117 0.2156 0.2156 1.0</diffuse>
-        <specular>0.1 0.1 0.1 1.0</specular>
+        <diffuse>0.3 0.3 0.3 1.0</diffuse>
+        <specular>0.0 0.0 0.0 1.0</specular>
         <emissive>0.0 0.0 0.0 1.0</emissive>
       </material>
     </visual>
@@ -55,12 +55,11 @@
     </visual>
   </gazebo>
 
-
   <gazebo reference="wheel_left_link">
     <mu1>2.0</mu1>
     <mu2>2.0</mu2>
     <kp>1000000.0</kp>
-    <kd>1000.0</kd>
+    <kd>10.0</kd>
     <minDepth>0.001</minDepth>
     <maxVel>0.1</maxVel>
     <fdir1>1 0 0</fdir1>
@@ -88,40 +87,6 @@
     <!-- <material>Gazebo/FlatBlack</material> -->
   </gazebo>
 
-<!-- 
-  <gazebo>
-    <plugin name="tb3_diff_drive" filename="libgazebo_ros_diff_drive.so">
-      <update_rate>50</update_rate>
-
-      <left_joint>wheel_left_joint</left_joint>
-      <right_joint>wheel_right_joint</right_joint>
-
-      <wheel_separation>0.160</wheel_separation>
-      <wheel_diameter>${wheel_radius * 2}</wheel_diameter>
-
-      <max_wheel_torque>20</max_wheel_torque>
-      <max_wheel_acceleration>1.0</max_wheel_acceleration>
-
-      <command_topic>cmd_vel</command_topic>
-
-      <publish_odom>true</publish_odom>
-      <publish_odom_tf>true</publish_odom_tf>
-
-      <odometry_frame>odom</odometry_frame>
-      <robot_base_frame>base_footprint</robot_base_frame>
-    </plugin>
-  </gazebo>
-
-  <gazebo>
-    <plugin name="tb3_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
-      <ros>
-        <remapping>~/out:=joint_states</remapping>
-      </ros>
-      <update_rate>50</update_rate>
-      <joint_name>wheel_left_joint</joint_name>
-      <joint_name>wheel_right_joint</joint_name>
-    </plugin>
-  </gazebo> -->
 
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
@@ -148,32 +113,32 @@
   </ros2_control>
 
   <gazebo>
-    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-      <!-- <parameters>$(find boxbot_bringup)/config/controllers.yaml</parameters> -->
-      <parameters>$(find boxbot_bringup)/config/controllers_advenced.yaml</parameters>
-
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so"> 
+      <parameters>$(find boxbot_bringup)/config/controllers_advanced.yaml</parameters>
       <ros>
         <use_sim_time>true</use_sim_time>
         <remapping>/diff_drive_controller/cmd_vel_unstamped:=/cmd_vel</remapping>
         <!-- <remapping>/diff_drive_controller/odom:=/odom</remapping> -->
       </ros>
-
     </plugin>
   </gazebo>
 
 
   <xacro:property name="lidar_selection" value="$(arg lidar_model)" />
   <xacro:if value="${lidar_selection == 'lds'}">
-    <gazebo reference="laser_scan_link">
-      <sensor name="hls_lfcd_lds" type="ray">
+
+  <gazebo reference="laser_scan_link">
+      <sensor name="hls_lfcd_lds" type="gpu_ray">
         <always_on>true</always_on>
+        <visualize>false</visualize>
         <update_rate>10</update_rate>
         <ray>
           <scan>
             <horizontal>
               <samples>360</samples>
-              <min_angle>0.0</min_angle>
-              <max_angle>6.28</max_angle>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
             </horizontal>
           </scan>
           <range>
@@ -196,27 +161,68 @@
     </gazebo>
   </xacro:if>
 
-
   <gazebo reference="imu_link">
     <sensor name="tb3_imu" type="imu">
       <always_on>true</always_on>
+      <visualize>true</visualize>
       <update_rate>100</update_rate>
       <imu>
         <angular_velocity>
-          <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></x>
-          <y><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></y>
-          <z><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></z>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </z>
         </angular_velocity>
         <linear_acceleration>
-          <x><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></x>
-          <y><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></y>
-          <z><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></z>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </z>
         </linear_acceleration>
       </imu>
       <plugin name="tb3_imu" filename="libgazebo_ros_imu_sensor.so">
         <ros><remapping>~/out:=imu</remapping></ros>
         <frame_name>imu_link</frame_name>
-        <gaussianNoise>0.01</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -237,6 +243,7 @@
         </image>
         <clip><near>0.105</near><far>10.0</far></clip>
       </camera>
+
       <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
         <ros>
           <namespace>camera</namespace>
@@ -244,9 +251,9 @@
           <remapping>depth/image_raw:=depth/image_rect_raw</remapping>
           <remapping>points:=depth/color/points</remapping>
         </ros>
-        <!-- <camera_name>/</camera_name> -->
         <frame_name>camera_depth_optical_frame</frame_name>
       </plugin>
+
     </sensor>
   </gazebo>
 

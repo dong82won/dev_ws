@@ -1,4 +1,5 @@
 import os
+
 from ament_index_python.packages import get_package_prefix, get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
@@ -7,25 +8,31 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
+    pkg_simulation = get_package_share_directory('dw_simulation')
+    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
-    # 1. 시뮬레이션 시간 설정 인자 선언
-    use_sim_time_arg = DeclareLaunchArgument('use_sim_time',default_value='true',
-                                                            description='Use simulation time')
-    use_sim_time = LaunchConfiguration('use_sim_time')
-
-    # 3. 패키지 및 모델 경로 설정 (사용자님 기존 로직 유지)
     realsense_share = get_package_share_directory('realsense2_description')
     realsense_model_path = os.path.abspath(os.path.join(realsense_share, '..'))
 
-    pkg_simulation = get_package_share_directory('dw_simulation')
-
-    gazebo_models_dir = os.path.join(pkg_simulation, 'models')
-    # 2. 가제보 파라미터 파일 경로 설정 (publish_rate: 100.0 설정 포함)
-    gazebo_params_path = os.path.join(pkg_simulation, 'config', 'gazebo_params.yaml')
-
     pkg_robot_description = get_package_prefix('tb3_description')
 
-    # 4. GAZEBO_MODEL_PATH 구성을 위한 리스트 생성
+    # 1. 인자 선언 및 참조
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    declare_use_sim_time_cmd = DeclareLaunchArgument('use_sim_time', default_value='true', description='Use simulation time')
+    declare_world_cmd = DeclareLaunchArgument(
+        'world',
+        # default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_house.world'),
+        default_value=os.path.join(pkg_simulation, 'worlds', 'test_worlds', 'test_room_v0.world'),
+        description='Full path to the world file to load'
+    )
+
+    # 2. Gazebo 파라미터 파일 및 모델 경로 설정
+    # 가제보 파라미터 파일 경로 설정 (publish_rate: 100.0 설정 포함)
+    gazebo_params_path = os.path.join(pkg_simulation, 'config', 'gazebo_params.yaml')
+    gazebo_models_dir = os.path.join(pkg_simulation, 'models')
+
+
+    # 3. GAZEBO_MODEL_PATH 구성을 위한 리스트 생성
     model_paths = [
         os.path.join(pkg_robot_description, 'share'),
         gazebo_models_dir,
@@ -39,7 +46,7 @@ def generate_launch_description():
             if os.path.isdir(full_path) and not os.path.exists(os.path.join(full_path, 'model.config')):
                 model_paths.append(full_path)
 
-    # 5. 환경 변수 병합 헬퍼 함수
+    # 4. 환경 변수 병합 헬퍼 함수
     def append_env_path(new_paths, env_var_name):
         existing_path = os.environ.get(env_var_name, '')
         return ':'.join(filter(None, new_paths + [existing_path]))
@@ -48,17 +55,8 @@ def generate_launch_description():
     env_gazebo_plugin_path = append_env_path([os.path.join(pkg_robot_description, 'lib')], 'GAZEBO_PLUGIN_PATH')
     env_gazebo_resource_path = append_env_path([os.path.join(pkg_robot_description, 'share')], 'GAZEBO_RESOURCE_PATH')
 
-    # 6. 월드 파일 인자 선언
-    world_arg = DeclareLaunchArgument(
-        'world',
-        # default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_house.world'),
-        default_value=os.path.join(pkg_simulation, 'worlds', 'test_worlds', 'test_room_v0.world'),
-        description='Full path to the world file to load'
-    )
-    # 7. 가제보 서버(gzserver) 및 클라이언트(gzclient) 분리 실행
-    # gzserver 실행 시 params_file을 주입하여 publish_rate 설정을 확실히 적용합니다.
-    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
-
+    # 5. Gazebo Server & Client 실행
+    # gzserver 실행 시 params_file 강제 주입 (publish_rate 설정 등)
     gzserver_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
         launch_arguments={
@@ -76,11 +74,11 @@ def generate_launch_description():
     )
     # 8. 최종 실행 구성 반환
     return LaunchDescription([
-        use_sim_time_arg,
+        declare_use_sim_time_cmd,
+        declare_world_cmd,
         SetEnvironmentVariable('GAZEBO_MODEL_PATH', env_gazebo_model_path),
         SetEnvironmentVariable('GAZEBO_PLUGIN_PATH', env_gazebo_plugin_path),
-        SetEnvironmentVariable('GAZEBO_RESOURCE_PATH', env_gazebo_resource_path),
-        world_arg,
+        SetEnvironmentVariable('GAZEBO_RESOURCE_PATH', env_gazebo_resource_path), 
         gzserver_launch,
         gzclient_launch
     ])

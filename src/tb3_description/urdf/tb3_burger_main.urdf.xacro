@@ -104,7 +104,6 @@
         <mesh filename="package://tb3_description/meshes/sensors/lds.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="charcoalgrey"/>
-
     </visual>
     <collision>
       <origin xyz="0.015 0 -0.0065" rpy="0 0 0"/><geometry>
