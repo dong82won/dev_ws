@@ -13,7 +13,7 @@ def generate_launch_description():
     # 1. 인자 선언 (기본값 true) 
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_sim_time_arg = DeclareLaunchArgument(
-        'use_sim_time', 
+        'use_sim_time',
         default_value='true',
         description='Use simulation time'
     )
@@ -21,7 +21,7 @@ def generate_launch_description():
     # 2. Localization (EKF) - 수정됨
     localization_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_bringup, 'launch', 'localization.launch.py') # 여기서 괄호 닫기!
+            os.path.join(pkg_bringup, 'launch', 'localization2.launch.py') # 여기서 괄호 닫기!
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items() # IncludeLaunchDescription의 인자로 이동
     )

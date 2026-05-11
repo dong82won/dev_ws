@@ -62,7 +62,8 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         arguments=['-d', rviz_config_path],
-        parameters=[{'use_sim_time': use_sim_time}],
+        #parameters=[{'use_sim_time': use_sim_time}],
+        parameters=[{'use_sim_time': True}], # 강제로 불리언 True 적용
         condition=IfCondition(use_rviz),
         output='screen',
         on_exit=Shutdown()  # RViz가 종료되면 시뮬레이션도 종료

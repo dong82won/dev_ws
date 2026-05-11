@@ -22,7 +22,7 @@ def generate_launch_description():
     declare_world_cmd = DeclareLaunchArgument(
         'world',
         # default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'turtlebot3_house.world'),
-        default_value=os.path.join(pkg_simulation, 'worlds', 'test_worlds', 'test_room_v0.world'),
+        default_value=os.path.join(pkg_simulation, 'worlds', 'turtlebot3_worlds', 'test_room_v3.world'),
         description='Full path to the world file to load'
     )
 
