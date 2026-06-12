@@ -49,7 +49,7 @@ def generate_launch_description():
         ],
     )
 
-    params_file = os.path.join(pkg_share, 'config', 'realsense_params2.yaml')
+    params_file = os.path.join(pkg_share, 'config', 'realsense_params2_update.yaml')
     # 3. realsense2_camera 노드
     # 실제 기기 보정값을 읽어와 camera_link 하위의 렌즈 및 IMU TF를 완성하고 데이터를 쏩니다.
     realsense_node = Node(
@@ -80,9 +80,8 @@ def generate_launch_description():
         output='screen',
         parameters=[params_file],
         remappings=[
-            # 필터가 RealSense의 합쳐진 IMU 토픽을 구독하도록 연결
-            ('/imu/data_raw', '/camera/realsense_node/imu'),
-            # 필터링이 완료된(방향이 포함된) IMU 토픽의 출력 이름
+            # 💡 기존 '/camera/realsense_node/imu' 에서 아래와 같이 수정
+            ('/imu/data_raw', '/camera/camera/imu'), 
             ('/imu/data', '/imu/filtered')
         ]
     )
