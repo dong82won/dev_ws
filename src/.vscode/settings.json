@@ -1,0 +1,16 @@
+{
+  /* --- URDF Visualizer 패키지 범용 상대 경로 설정 --- */
+  "urdf-visualizer.packages": {
+    "boxbot_description": "boxbot_description",
+    "boxbot_bringup": "boxbot_bringup",
+    "tb3_description": "tb3_description",
+
+
+
+    //⭐ dev_ws 내부로 심볼릭 링크(Symlink) 연결
+    // ln -s /home/won/CODE_WS/ROS2CODE/external_ws/install/realsense2_description/share/realsense2_description ~/CODE_WS/ROS2CODE/dev_ws/src/realsense2_description
+
+    "realsense2_description": "realsense2_description"
+
+  },
+}
