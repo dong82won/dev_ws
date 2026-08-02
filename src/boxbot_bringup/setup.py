@@ -12,10 +12,10 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        # 런치 파일 설치
-        (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
-        # 설정 파일 설치
-        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')), 
+        # 런치 파일 전체 설치 (.launch.py, .py, .xml 등 모두 포함)
+        (os.path.join('share', package_name, 'launch'), glob('launch/*')),
+        # 설정 파일 전체 설치 (하위 경로 포함 안전성 확보)
+        (os.path.join('share', package_name, 'config'), glob('config/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
